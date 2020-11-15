@@ -1,0 +1,8 @@
+ghost/AppTest.java
+ ghost.AppTest
+ghost/FruitTest.java
+ ghost.FruitTest
+ghost/WallTest.java
+ ghost.WallTest
+ghost/MapTest.java
+ ghost.MapTest
