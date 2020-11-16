@@ -2,31 +2,39 @@ package ghost;
 
 public class Wall extends GameObject {
 
-    public Wall(int x, int y, char type, App app, int gridX, int gridY) {
-        super(x, y, null, app, gridX, gridY);
+    public Wall(int x, int y, char type, GameManager gm, int gridX, int gridY) {
+        super(x, y, null, gm, gridX, gridY);
         //Choose sprite based on type of wall
         switch (type) {
             case '1':
-                setSprite(app.horizontalImage);
+                setSprite(gm.app.horizontalImage);
                 break;
             case '2':
-                setSprite(app.verticalImage);
+                setSprite(gm.app.verticalImage);
                 break;
             case '3':
-                setSprite(app.upLeftImage);
+                setSprite(gm.app.upLeftImage);
                 break;
             case '4':
-                setSprite(app.upRightImage);
+                setSprite(gm.app.upRightImage);
                 break;
             case '5':
-                setSprite(app.downLeftImage);
+                setSprite(gm.app.downLeftImage);
                 break;
             case '6':
-                setSprite(app.downRightImage);
+                setSprite(gm.app.downRightImage);
                 break;
             default:
                 setSprite(null);
                 break;
         }
+    }
+
+    public void draw() {
+        getGm().app.image(getSprite(), getX(), getY());
+    }   
+
+    public void tick() {
+        ;
     }
 }

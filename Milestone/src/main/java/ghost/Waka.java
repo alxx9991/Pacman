@@ -1,20 +1,21 @@
 package ghost;
 
+import ghost.Ghost.Mode;
 import processing.core.PImage;
 
 public class Waka extends Movable {
     private int frameCycle;
-    private PImage closedSprite;
+    private final PImage closedSprite;
     boolean alive;
     private long lives;
 
-    public Waka(int x, int y, PImage sprite, App app, int gridX, int gridY) {
-        super(x, y, sprite, app, gridX, gridY);
+    public Waka(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+        super(x, y, sprite, gm, gridX, gridY);
         this.frameCycle = 0;
-        this.closedSprite = getApp().closedImage;
-        setDirection("still");
+        this.closedSprite = getGm().app.closedImage;
+        setDirection(Direction.Still);
         this.alive = true;
-        this.lives = getApp().lives;
+        this.lives = getGm().lives;
         setBorderTop(getY() + 2);
         setBorderBot(getY() + 22);
         setBorderLeft(getX() + 2);
@@ -35,7 +36,7 @@ public class Waka extends Movable {
             this.lives -= 1;
             setX(getStartX());
             setY(getStartY());
-            setDirection("still");
+            setDirection(Direction.Still);
             setGridX((int) Math.floor(getX() / 16));
             setGridY((int) Math.floor(getY() / 16));
             setCollisionBorders();
@@ -44,14 +45,14 @@ public class Waka extends Movable {
             this.alive = true;
             
 
-            for (Ghost ghost : getApp().ghosts) {
+            for (Ghost ghost : getGm().ghosts) {
                 ghost.setAlive(true);
                 ghost.setX(ghost.getStartX());
                 ghost.setY(ghost.getStartY());
                 ghost.setGridX((int) Math.floor(ghost.getX() / 16));
                 ghost.setGridY((int) Math.floor(ghost.getY() / 16));
                 ghost.setCollisionBorders();
-                ghost.setDirection("still");
+                ghost.setDirection(Direction.Still);
                 ghost.setXVel(0);
                 ghost.setYVel(0);
 
@@ -71,140 +72,140 @@ public class Waka extends Movable {
     //Choose direction 
     public void selectDirection() {
         //If player is still, select direction based on choice
-        if (getDirection().equals("still")) {
-            if (getApp().nextMove == null) {
+        if (getDirection().equals(Direction.Still)) {
+            if (getGm().nextMove == null) {
                 return;
             }
-            if (getApp().nextMove.equals("left")) {
+            if (getGm().nextMove.equals(Direction.Left)) {
                 if (!wallOnLeft()) {
-                    setDirection("left");
+                    setDirection(Direction.Left);
                 } else {
-                    getApp().nextMove = null;
+                    getGm().nextMove = null;
                 }
-            } else if (getApp().nextMove.equals("right")) {
+            } else if (getGm().nextMove.equals(Direction.Right)) {
                 if (!wallOnRight()) {
-                    setDirection("right");
+                    setDirection(Direction.Right);
                 } else {
-                    getApp().nextMove = null;
+                    getGm().nextMove = null;
                 }
-            } else if (getApp().nextMove.equals("down")) {
+            } else if (getGm().nextMove.equals(Direction.Down)) {
                 if (!wallBelow()) {
-                    setDirection("down");
+                    setDirection(Direction.Down);
                 } else {
-                    getApp().nextMove = null;
+                    getGm().nextMove = null;
                 }
-            } else if (getApp().nextMove.equals("up")) {
+            } else if (getGm().nextMove.equals(Direction.Up)) {
                 if (!wallAbove()) {
-                    setDirection("up");
+                    setDirection(Direction.Up);
                 } else {
-                    getApp().nextMove = null;
+                    getGm().nextMove = null;
                 }
             }
             return;
         }
 
         //If player is currently moving, select direction based on available choices and desired direction
-        if (getApp().nextMove == null) {
+        if (getGm().nextMove == null) {
             checkWallCollision();
-        } else if (getDirection().equals("right")) {
-            if (getApp().nextMove.equals("left")) {
+        } else if (getDirection().equals(Direction.Right)) {
+            if (getGm().nextMove.equals(Direction.Left)) {
                 checkWallCollision();
-                setDirection("left");
-                getApp().nextMove = null;
+                setDirection(Direction.Left);
+                getGm().nextMove = null;
 
-            } else if (getApp().nextMove.equals("up")) {
+            } else if (getGm().nextMove.equals(Direction.Up)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallAbove() == false) {
-                        setDirection("up");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Up);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("down")) {
+            } else if (getGm().nextMove.equals(Direction.Down)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallBelow() == false) {
-                        setDirection("down");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Down);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("right")) {
+            } else if (getGm().nextMove.equals(Direction.Right)) {
                 checkWallCollision();
                 ;
             }
-        } else if (getDirection().equals("left")) {
-            if (getApp().nextMove.equals("right")) {
+        } else if (getDirection().equals(Direction.Left)) {
+            if (getGm().nextMove.equals(Direction.Right)) {
                 checkWallCollision();
-                setDirection("right");
-                getApp().nextMove = null;
+                setDirection(Direction.Right);
+                getGm().nextMove = null;
 
-            } else if (getApp().nextMove.equals("up")) {
+            } else if (getGm().nextMove.equals(Direction.Up)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallAbove() == false) {
-                        setDirection("up");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Up);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("down")) {
+            } else if (getGm().nextMove.equals(Direction.Down)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallBelow() == false) {
-                        setDirection("down");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Down);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("left")) {
+            } else if (getGm().nextMove.equals(Direction.Left)) {
                 checkWallCollision();
                 ;
             }
-        } else if (getDirection().equals("up")) {
-            if (getApp().nextMove.equals("down")) {
+        } else if (getDirection().equals(Direction.Up)) {
+            if (getGm().nextMove.equals(Direction.Down)) {
                 checkWallCollision();
-                setDirection("down");
-                getApp().nextMove = null;
-            } else if (getApp().nextMove.equals("left")) {
+                setDirection(Direction.Down);
+                getGm().nextMove = null;
+            } else if (getGm().nextMove.equals(Direction.Left)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallOnLeft() == false) {
-                        setDirection("left");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Left);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("right")) {
+            } else if (getGm().nextMove.equals(Direction.Right)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallOnRight() == false) {
-                        setDirection("right");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Right);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("up")) {
+            } else if (getGm().nextMove.equals(Direction.Up)) {
                 checkWallCollision();
                 ;
             }
-        } else if (getDirection().equals("down")) {
-            if (getApp().nextMove.equals("up")) {
+        } else if (getDirection().equals(Direction.Down)) {
+            if (getGm().nextMove.equals(Direction.Up)) {
                 checkWallCollision();
-                setDirection("up");
-                getApp().nextMove = null;
-            } else if (getApp().nextMove.equals("left")) {
+                setDirection(Direction.Up);
+                getGm().nextMove = null;
+            } else if (getGm().nextMove.equals(Direction.Left)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallOnLeft() == false) {
-                        setDirection("left");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Left);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("right")) {
+            } else if (getGm().nextMove.equals(Direction.Right)) {
                 checkWallCollision();
                 if (getX() % 16 == 0 && getY() % 16 == 0) {
                     if (wallOnRight() == false) {
-                        setDirection("right");
-                        getApp().nextMove = null;
+                        setDirection(Direction.Right);
+                        getGm().nextMove = null;
                     }
                 }
-            } else if (getApp().nextMove.equals("down")) {
+            } else if (getGm().nextMove.equals(Direction.Down)) {
                 checkWallCollision();
                 ;
             }
@@ -233,84 +234,85 @@ public class Waka extends Movable {
     
     //Choose open sprite based on direction of travel
     public void setSpriteOpen() {
-        if (getDirection().equals("left")) {
-            setSprite(getApp().faceLeftImage);
-        } else if (getDirection().equals("right")) {
-            setSprite(getApp().faceRightImage);
-        } else if (getDirection().equals("down")) {
-            setSprite(getApp().faceDownImage);
-        } else if (getDirection().equals("up")) {
-            setSprite(getApp().faceUpImage);
+        if (getDirection().equals(Direction.Left)) {
+            setSprite(getGm().app.faceLeftImage);
+        } else if (getDirection().equals(Direction.Right)) {
+            setSprite(getGm().app.faceRightImage);
+        } else if (getDirection().equals(Direction.Down)) {
+            setSprite(getGm().app.faceDownImage);
+        } else if (getDirection().equals(Direction.Up)) {
+            setSprite(getGm().app.faceUpImage);
         }
     }
 
-    @Override
     public void draw() {
         if (this.determineSpriteOpen()) {
-            getApp().image(getSprite(), getX() - 4, getY() - 5);
+            getGm().app.image(getSprite(), getX() - 4, getY() - 5);
         } else {
-            getApp().image(closedSprite, getX() - 4, getY() - 5);
+            getGm().app.image(closedSprite, getX() - 4, getY() - 5);
         }
 
         // Display lives
         int lifeX = 8;
         int lifeY = 543;
         for (int i = 0; i < lives; i++) {
-            getApp().image(getApp().faceRightImage, lifeX, lifeY);
+            getGm().app.image(getGm().app.faceRightImage, lifeX, lifeY);
             lifeX += 30;
         }
     }
 
     public void checkWallCollision() {
-        if (getDirection().equals("right")) {
+        if (getDirection().equals(Direction.Right)) {
             if (collideWallOnRight()) {
                 setXVel(0);
                 setYVel(0);
-                setDirection("still");
-                getApp().nextMove = null;
+                setDirection(Direction.Still);
+                getGm().nextMove = null;
             }
-        } else if (getDirection().equals("left")) {
+        } else if (getDirection().equals(Direction.Left)) {
             if (collideWallOnLeft()) {
                 setXVel(0);
                 setYVel(0);
-                setDirection("still");
-                getApp().nextMove = null;
+                setDirection(Direction.Still);
+                getGm().nextMove = null;
             }
-        } else if (getDirection().equals("up")) {
+        } else if (getDirection().equals(Direction.Up)) {
             if (collideWallAbove()) {
                 setXVel(0);
                 setYVel(0);
-                setDirection("still");
-                getApp().nextMove = null;
+                setDirection(Direction.Still);
+                getGm().nextMove = null;
             }
-        } else if (getDirection().equals("down")) {
+        } else if (getDirection().equals(Direction.Down)) {
             if (collideWallBelow()) {
                 setXVel(0);
                 setYVel(0);
-                setDirection("still");
-                getApp().nextMove = null;
+                setDirection(Direction.Still);
+                getGm().nextMove = null;
             }
         }
     }
     
     //Check for collision with ghost based on player and ghost collision boundaries, and set player/ghost alive boolean based on mode
     public void checkGhostCollision() {
-        for (Ghost ghost : getApp().ghosts) {
-            boolean collided = false;
-            if (this.getBorderRight() >= ghost.getBorderLeft() && this.getBorderRight() <= ghost.getBorderRight() && this.getBorderBot() >= ghost.getBorderTop() && this.getBorderBot() <= ghost.getBorderBot()) {
-                collided = true;
-            } else if (this.getBorderLeft() <= ghost.getBorderRight() && this.getBorderLeft() >= ghost.getBorderLeft() && this.getBorderBot() >= ghost.getBorderTop() && this.getBorderBot() <= ghost.getBorderBot()) {
-                collided = true;
-            } else if (this.getBorderLeft() <= ghost.getBorderRight() && this.getBorderLeft() >= ghost.getBorderLeft() && this.getBorderTop() <= ghost.getBorderBot() && this.getBorderTop() >= ghost.getBorderTop()) {
-                collided = true;
-            } else if (this.getBorderRight() >= ghost.getBorderLeft() && this.getBorderRight() <= ghost.getBorderRight() && this.getBorderTop() <= ghost.getBorderBot() && this.getBorderTop() >= ghost.getBorderTop()) {
-                collided = true;
-            }
-            if (collided) {
-                if (ghost.getMode() == "frightened") {
-                    ghost.setAlive(false);
-                } else {
-                    this.alive = false;
+        for (Ghost ghost : getGm().ghosts) {
+            if (ghost.isAlive()) {
+                boolean collided = false;
+                if (this.getBorderRight() >= ghost.getBorderLeft() && this.getBorderRight() <= ghost.getBorderRight() && this.getBorderBot() >= ghost.getBorderTop() && this.getBorderBot() <= ghost.getBorderBot()) {
+                    collided = true;
+                } else if (this.getBorderLeft() <= ghost.getBorderRight() && this.getBorderLeft() >= ghost.getBorderLeft() && this.getBorderBot() >= ghost.getBorderTop() && this.getBorderBot() <= ghost.getBorderBot()) {
+                    collided = true;
+                } else if (this.getBorderLeft() <= ghost.getBorderRight() && this.getBorderLeft() >= ghost.getBorderLeft() && this.getBorderTop() <= ghost.getBorderBot() && this.getBorderTop() >= ghost.getBorderTop()) {
+                    collided = true;
+                } else if (this.getBorderRight() >= ghost.getBorderLeft() && this.getBorderRight() <= ghost.getBorderRight() && this.getBorderTop() <= ghost.getBorderBot() && this.getBorderTop() >= ghost.getBorderTop()) {
+                    collided = true;
+                }
+                if (collided) {
+                    if (ghost.getMode() == Mode.Frightened) {
+                        ghost.setAlive(false);
+                    } else {
+                        this.alive = false;
+                    }
                 }
             }
         }
@@ -320,14 +322,14 @@ public class Waka extends Movable {
     public void playerRestart() {
         setX(getStartX());
         setY(getStartY());
-        setDirection("still");
+        setDirection(Direction.Still);
         setGridX((int) Math.floor(getX() / 16));
         setGridY((int) Math.floor(getY() / 16));
         setCollisionBorders();
         setXVel(0);
         setYVel(0);
         setAlive(true);
-        setLives(getApp().lives);
+        setLives(getGm().lives);
     }
 
     public void setAlive(boolean b) {

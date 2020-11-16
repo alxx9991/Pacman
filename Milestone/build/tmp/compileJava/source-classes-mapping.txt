@@ -12,15 +12,20 @@ ghost/Map.java
  ghost.Map
 ghost/GameObject.java
  ghost.GameObject
+ ghost.OutOfMapException
 ghost/Ambusher.java
  ghost.Ambusher
 ghost/Waka.java
  ghost.Waka
 ghost/Movable.java
  ghost.Movable
+ ghost.Movable$Direction
+ghost/GameManager.java
+ ghost.GameManager
 ghost/Fruit.java
  ghost.Fruit
 ghost/Ghost.java
  ghost.Ghost
+ ghost.Ghost$Mode
 ghost/App.java
  ghost.App

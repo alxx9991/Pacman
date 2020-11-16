@@ -5,31 +5,31 @@ import processing.core.PImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Ghost extends Movable {
+public abstract class Ghost extends Movable {
     // Scatter/Chase mode timer
-    private String mode;
+    private Mode mode;
     private int frameCount;
     private int cycleIndex;
     private long cycleLength;
     private long frightenedCount;
     private long frightenedLength;
-    private String savedMode;
+    private Mode savedMode;
     private boolean alive;
 
     // Corner target coordinate
-    private int[] corner;
+    private final int[] corner;
 
-    public Ghost(int x, int y, PImage sprite, App app, int gridX, int gridY, int cornerX, int cornerY) {
-        super(x, y, sprite, app, gridX, gridY);
+    public Ghost(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY, int cornerX, int cornerY) {
+        super(x, y, sprite, gm, gridX, gridY);
         this.alive = true;
 
         // Modes
-        this.mode = "scatter";
+        this.mode = Mode.Scatter;
         this.frameCount = 0;
         this.cycleIndex = 0;
-        this.cycleLength = getApp().modeLengths.get(cycleIndex) * 60;
+        this.cycleLength = getGm().modeLengths.get(cycleIndex) * 60;
         this.frameCount = 0;
-        this.frightenedLength = getApp().frightenedLength * 60;
+        this.frightenedLength = getGm().frightenedLength * 60;
 
         // Collision
         setBorderTop(getY() + 2);
@@ -44,12 +44,18 @@ public class Ghost extends Movable {
 
     }
 
-    @Override
+public enum Mode {
+    Scatter,
+    Chase,
+    Frightened
+}
     public void draw() {
-        if (this.mode != "frightened") { 
-            getApp().image(getSprite(), getX() - 5, getY() - 6);
-        } else { //If frightened, draw frightened image
-            getApp().image(getApp().frightenedImage, getX() - 5, getY() - 6);
+        if (alive) {
+            if (this.mode != Mode.Frightened) { 
+                getGm().app.image(getSprite(), getX() - 5, getY() - 6);
+            } else { //If frightened, draw frightened image
+                getGm().app.image(getGm().app.frightenedImage, getX() - 5, getY() - 6);
+            }
         }
     }
 
@@ -58,7 +64,7 @@ public class Ghost extends Movable {
         checkIfAlive();
         selectMode();
         if (alive) {
-            if (getApp().debug) {
+            if (getGm().debug) {
                 drawTargetLine();
             }
             if (canChangeDirection()) {
@@ -79,14 +85,14 @@ public class Ghost extends Movable {
     
     //Draws lines to target location
     public void drawTargetLine() {
-        if (this.mode == "chase") {
-            int[] vector = generateVectors(getApp().player.getX(), getApp().player.getY());
-            getApp().g.line(vector[0] + this.getX(), vector[1] + this.getY(), this.getX(), this.getY());
-            getApp().g.stroke(126);
-        } else if (this.mode == "scatter") {
+        if (this.mode == Mode.Chase) {
+            int[] vector = generateVectors(getGm().player.getX(), getGm().player.getY());
+            getGm().app.g.line(vector[0] + this.getX(), vector[1] + this.getY(), this.getX(), this.getY());
+            getGm().app.g.stroke(126);
+        } else if (this.mode == Mode.Scatter) {
             int[] vector = generateVectors(this.corner[0], this.corner[1]);
-            getApp().g.line(this.getX(), this.getY(), vector[0] + this.getX(), vector[1] + this.getY());
-            getApp().g.stroke(126);
+            getGm().app.g.line(this.getX(), this.getY(), vector[0] + this.getX(), vector[1] + this.getY());
+            getGm().app.g.stroke(126);
         } else {
             return;
         }
@@ -94,60 +100,60 @@ public class Ghost extends Movable {
     
     //Sets the direction of travel based on generation of next move
     public void selectDirection() {
-        if (this.mode == "frightened") {
+        if (this.mode == Mode.Frightened) {
             setDirection(generateNextMove(0, 0));
             return;
         }
         //If ghost is still, initialise travel direction
-        if (getDirection() == "still") {
-            if (this.mode == "chase") {
-                setDirection(generateNextMove(getApp().player.getGridX() * 16, getApp().player.getGridY() * 16));
-            } else if (this.mode == "scatter") {
+        if (getDirection() == Direction.Still) {
+            if (this.mode == Mode.Chase) {
+                setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));
+            } else if (this.mode == Mode.Scatter) {
                 setDirection(generateNextMove(this.corner[0], this.corner[1]));
             }
         }
         //Check if location appropriate for change of direction (intersection)
         if (canChangeDirection()) {
-            if (this.mode.equals("scatter")) {
+            if (this.mode.equals(Mode.Scatter)) {
                 setDirection(generateNextMove(this.corner[0], this.corner[1]));
-            } else if (this.mode.equals("chase")) {
-                setDirection(generateNextMove(getApp().player.getGridX() * 16, getApp().player.getGridY() * 16));
+            } else if (this.mode.equals(Mode.Chase)) {
+                setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));
             }
             if (getDirection() == null) {
-                setDirection("still");
+                setDirection(Direction.Still);
             }
         }
     }
     
     //Selects mode based on timer and mode lengths configuration
     public void selectMode() {
-        if (this.mode != "frightened") {
+        if (this.mode != Mode.Frightened) {
             if (this.frameCount < this.cycleLength) {
                 this.frameCount++;
             } else {
                 this.frameCount = 0;
-                if (this.cycleIndex < getApp().modeLengths.size() - 1) {
+                if (this.cycleIndex < getGm().modeLengths.size() - 1) {
                     this.cycleIndex++;
-                    this.cycleLength = getApp().modeLengths.get(this.cycleIndex) * 60;
+                    this.cycleLength = getGm().modeLengths.get(this.cycleIndex) * 60;
                     if (this.cycleIndex % 2 == 1) {
-                        this.mode = "chase";
+                        this.mode = Mode.Chase;
                     } else {
-                        this.mode = "scatter";
+                        this.mode = Mode.Scatter;
                     }
                 } else {
                     this.cycleIndex = 0;
-                    this.cycleLength = getApp().modeLengths.get(this.cycleIndex) * 60;
-                    this.mode = "chase";
+                    this.cycleLength = getGm().modeLengths.get(this.cycleIndex) * 60;
+                    this.mode = Mode.Chase;
                 }
             }
         }
     }
     
     //Generates next move given a list of preferences for direction of travel
-    public String generateNextMove(int targetx, int targety) {
+    public Direction generateNextMove(int targetx, int targety) {
         int[] vector = generateVectors(targetx, targety);
-        ArrayList<String> preferenceList = generatePreferences(getDirection(), vector);
-        for (String preference : preferenceList) {
+        ArrayList<Direction> preferenceList = generatePreferences(getDirection(), vector);
+        for (Direction preference : preferenceList) {
             if (canGoDirection(preference)) {
                 return preference; // Go through preferences in order, execute first one which is valid
             }
@@ -158,13 +164,13 @@ public class Ghost extends Movable {
     //Check that ghost is at an intersection, and completely within a grid, so it can change direction
     public boolean canChangeDirection() {
         if (this.getX() % 16 == 0 && this.getY() % 16 == 0) {
-            if (getDirection() == "up" || getDirection() == "down") {
+            if (getDirection() == Direction.Up || getDirection() == Direction.Down) {
                 if (!this.wallOnLeft() || !this.wallOnRight() || collideWallAbove() || collideWallBelow()) {
                     return true;
                 } else {
                     return false;
                 }
-            } else if (getDirection() == "left" || getDirection() == "right") {
+            } else if (getDirection() == Direction.Left || getDirection() == Direction.Right) {
                 if (!this.wallBelow() || !this.wallAbove() || collideWallOnLeft() || collideWallOnRight()) {
                     return true;
                 } else {
@@ -178,26 +184,26 @@ public class Ghost extends Movable {
         }
     }
     
-    public boolean canGoDirection(String direction) {
+    public boolean canGoDirection(Direction direction) {
         // Determine if can go in a particular direction based on wall locations
-        if (direction == "right") {
+        if (direction == Direction.Right) {
             if (wallOnRight()) {
                 return false;
             }
             return true;
-        } else if (direction == "left") {
+        } else if (direction == Direction.Left) {
             if (wallOnLeft()) {
                 return false;
             } else {
                 return true;
             }
-        } else if (direction == "up") {
+        } else if (direction == Direction.Up) {
             if (wallAbove()) {
                 return false;
             } else {
                 return true;
             }
-        } else if (direction == "down") {
+        } else if (direction == Direction.Down) {
             if (wallBelow()) {
                 return false;
             } else {
@@ -208,95 +214,90 @@ public class Ghost extends Movable {
         }
     }
     
-    //Default generate vector to travel to location
-    public int[] generateVectors(int targetx, int targety) {
-        int[] vector = new int[2];
-        vector[0] = targetx - this.getX();
-        vector[1] = targety - this.getY();
-        return vector;
-    }
+    public abstract int[] generateVectors(int targetx, int targety);
+    
     
     //Generate list of moves based on intended vector in preferred order
-    public ArrayList<String> generatePreferences(String direction, int[] vector) {
-        ArrayList<String> preferenceList = new ArrayList<String>();
+    public ArrayList<Direction> generatePreferences(Direction direction, int[] vector) {
+        ArrayList<Direction> preferenceList = new ArrayList<Direction>();
         int vectorx = vector[0];
         int vectory = vector[1];
 
         if (vectorx >= 0 && vectory >= 0) {
             if (vectorx >= vectory) { // want to go right and down
-                preferenceList.add("right");
-                preferenceList.add("down");
-                preferenceList.add("up");
-                preferenceList.add("left");
+                preferenceList.add(Direction.Right);
+                preferenceList.add(Direction.Down);
+                preferenceList.add(Direction.Up);
+                preferenceList.add(Direction.Left);
             } else if (vectorx <= vectory) { // want to go down and right
-                preferenceList.add("down");
-                preferenceList.add("right");
-                preferenceList.add("left");
-                preferenceList.add("up");
+                preferenceList.add(Direction.Down);
+                preferenceList.add(Direction.Right);
+                preferenceList.add(Direction.Left);
+                preferenceList.add(Direction.Up);
             }
         } else if (vectorx >= 0 && vectory <= 0) {
             if (vectorx >= -vectory) { // want to go right and up
-                preferenceList.add("right");
-                preferenceList.add("up");
-                preferenceList.add("down");
-                preferenceList.add("left");
+                preferenceList.add(Direction.Right);
+                preferenceList.add(Direction.Up);
+                preferenceList.add(Direction.Down);
+                preferenceList.add(Direction.Left);
             } else if (vectorx <= -vectory) { // want to go up and right
-                preferenceList.add("up");
-                preferenceList.add("right");
-                preferenceList.add("left");
-                preferenceList.add("down");
+                preferenceList.add(Direction.Up);
+                preferenceList.add(Direction.Right);
+                preferenceList.add(Direction.Left);
+                preferenceList.add(Direction.Down);
             }
         } else if (vectorx <= 0 && vectory <= 0) {
             if (-vectorx >= -vectory) { // want to go left and up
-                preferenceList.add("left");
-                preferenceList.add("up");
-                preferenceList.add("down");
-                preferenceList.add("right");
+                preferenceList.add(Direction.Left);
+                preferenceList.add(Direction.Up);
+                preferenceList.add(Direction.Down);
+                preferenceList.add(Direction.Right);
             } else if (-vectorx <= -vectory) { // want to go up and left
-                preferenceList.add("up");
-                preferenceList.add("left");
-                preferenceList.add("right");
-                preferenceList.add("down");
+                preferenceList.add(Direction.Up);
+                preferenceList.add(Direction.Left);
+                preferenceList.add(Direction.Right);
+                preferenceList.add(Direction.Down);
             }
         } else {
             if (-vectorx >= vectory) { // want to go left and down
-                preferenceList.add("left");
-                preferenceList.add("down");
-                preferenceList.add("up");
-                preferenceList.add("right");
+                preferenceList.add(Direction.Left);
+                preferenceList.add(Direction.Down);
+                preferenceList.add(Direction.Up);
+                preferenceList.add(Direction.Right);
             } else if (-vectorx <= vectory) { // want to go down and left
-                preferenceList.add("down");
-                preferenceList.add("left");
-                preferenceList.add("right");
-                preferenceList.add("up");
+                preferenceList.add(Direction.Down);
+                preferenceList.add(Direction.Left);
+                preferenceList.add(Direction.Right);
+                preferenceList.add(Direction.Up);
             }
         }
 
-        if (this.mode.equals("frightened")) {
+        if (this.mode.equals(Mode.Frightened)) {
             // Randomise preference list if in frightened mode
             Collections.shuffle(preferenceList);
         } 
 
         // change opposite direction of movement as last preference
-        if (direction == "left") {
-            preferenceList.remove("right");
-            preferenceList.add("right");
-        } else if (direction == "right") {
-            preferenceList.remove("left");
-            preferenceList.add("left");
-        } else if (direction == "up") {
-            preferenceList.remove("down");
-            preferenceList.add("down");
+        if (direction == Direction.Left) {
+            preferenceList.remove(Direction.Right);
+            preferenceList.add(Direction.Right);
+        } else if (direction == Direction.Right) {
+            preferenceList.remove(Direction.Left);
+            preferenceList.add(Direction.Left);
+        } else if (direction == Direction.Up) {
+            preferenceList.remove(Direction.Down);
+            preferenceList.add(Direction.Down);
         } else {
-            preferenceList.remove("up");
-            preferenceList.add("up");
+            preferenceList.remove(Direction.Up);
+            preferenceList.add(Direction.Up);
         }
         
         return preferenceList;
     }
     //Timer for frightened mode
     public void checkIfFrightened() {
-        if (this.mode == "frightened") {
+        if (this.mode == Mode.Frightened) {
             this.frightenedCount++;
             if (this.frightenedCount == frightenedLength) {
                 this.mode = this.savedMode;
@@ -307,9 +308,6 @@ public class Ghost extends Movable {
     //If dead, move ghost location off map
     public void checkIfAlive() {
         if (!this.alive) {
-            setX(-1000);
-            setY(-1000);
-            setCollisionBorders();
         }
     }
 
@@ -325,35 +323,35 @@ public class Ghost extends Movable {
         setCollisionBorders();
 
         // Restart direction
-        setDirection("still");
+        setDirection(Direction.Still);
         setXVel(0);
         setYVel(0);
 
         // Restart modes
-        setMode("scatter");
+        setMode(Mode.Scatter);
         frightenedCount = 0;
         this.frameCount = 0;
         this.cycleIndex = 0;
-        this.cycleLength = getApp().modeLengths.get(cycleIndex) * 60;
+        this.cycleLength = getGm().modeLengths.get(cycleIndex) * 60;
         this.frameCount = 0;
-        this.frightenedLength = getApp().frightenedLength * 60;
+        this.frightenedLength = getGm().frightenedLength * 60;
 
     }
     
     //Getters and setters
-    public String getMode() {
+    public Mode getMode() {
         return this.mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(Mode mode) {
         this.mode = mode;
     }
 
-    public String getSavedMode() {
+    public Mode getSavedMode() {
         return this.savedMode;
     }
 
-    public void setSavedMode(String savedMode) {
+    public void setSavedMode(Mode savedMode) {
         this.savedMode = savedMode;
     }
 

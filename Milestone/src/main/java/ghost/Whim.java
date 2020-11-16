@@ -5,12 +5,12 @@ import processing.core.PImage;
 public class Whim extends Ghost {
     private Chaser chaser;
 
-    public Whim(int x, int y, PImage sprite, App app, int gridX, int gridY) {
-        super(x, y, sprite, app, gridX, gridY, 448, 576);
+    public Whim(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+        super(x, y, sprite, gm, gridX, gridY, 448, 576);
     }
 
     public void setChaser() {
-        for (Ghost ghost : getApp().ghosts) {
+        for (Ghost ghost : getGm().ghosts) {
             if (ghost instanceof Chaser) {
                 if (((Chaser) ghost).hasWhim() == false) {
                     this.chaser = (Chaser) ghost;
@@ -21,7 +21,6 @@ public class Whim extends Ghost {
         }
     }
 
-    @Override
     public int[] generateVectors(int targetx, int targety) {
         // target will be where the vector of the chaser + location of target
         // set new vector
@@ -31,7 +30,7 @@ public class Whim extends Ghost {
         vector[0] = targetx - this.getX();
         vector[1] = targety - this.getY();
 
-        if (getMode().equals("chase")) {
+        if (getMode().equals(Mode.Chase)) {
             if (this.chaser == null) {
 
                 vector[0] = targetx - this.getX();
@@ -48,22 +47,22 @@ public class Whim extends Ghost {
                 vector[0] = targetx - this.getX();
                 vector[1] = targety - this.getY();
 
-                if (getApp().player.getDirection().equals("right")) {
+                if (getGm().player.getDirection().equals(Direction.Right)) {
                     vector[0] += 64;
                     if (getX() + vector[0] > 448) {
                         vector[0] = 448 - getX();
                     }
-                } else if (getApp().player.getDirection().equals("left")) {
+                } else if (getGm().player.getDirection().equals(Direction.Left)) {
                     vector[0] -= 64;
                     if (getX() + vector[0] < 0) {
                         vector[0] = -getX();
                     }
-                } else if (getApp().player.getDirection().equals("up")) {
+                } else if (getGm().player.getDirection().equals(Direction.Up)) {
                     vector[1] -= 64;
                     if (getY() + vector[1] < 0) {
                         vector[1] = -getY();
                     }
-                } else {
+                } else if (getGm().player.getDirection().equals(Direction.Down)){
                     vector[1] += 64;
                     if (getY() + vector[1] > 576) {
                         vector[1] = 576 - getY();

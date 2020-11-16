@@ -2,9 +2,9 @@ package ghost;
 
 import processing.core.PImage;
 
-public class Movable extends GameObject {
+public abstract class Movable extends GameObject {
     // Movement characteristics
-    private String direction;
+    private Direction direction;
     private long xVel;
     private long yVel;
     private long speed;
@@ -16,34 +16,42 @@ public class Movable extends GameObject {
     private int borderRight;
 
     // Starting position in pixels
-    private int startX;
-    private int startY;
+    private final int startX;
+    private final int startY;
 
-    public Movable(int x, int y, PImage sprite, App app, int gridX, int gridY) {
-        super(x, y, sprite, app, gridX, gridY);
-        this.direction = "still";
+    public Movable(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+        super(x, y, sprite, gm, gridX, gridY);
+        this.direction = Direction.Still;
         this.xVel = 0;
         this.yVel = 0;
-        this.speed = app.speed;
+        this.speed = gm.speed;
         this.startX = x;
         this.startY = y;
     }
 
+    public enum Direction {
+        Left,
+        Right,
+        Up,
+        Down,
+        Still
+    }
+
     public void move() {
         // Set velocity
-        if (this.direction.equals("left")) {
+        if (this.direction == Direction.Left) {
             this.xVel = -this.speed;
             this.yVel = 0;
-        } else if (this.direction.equals("right")) {
+        } else if (this.direction == Direction.Right) {
             this.xVel = this.speed;
             this.yVel = 0;
-        } else if (this.direction.equals("down")) {
+        } else if (this.direction == Direction.Down) {
             this.xVel = 0;
             this.yVel = this.speed;
-        } else if (this.direction.equals("up")) {
+        } else if (this.direction == Direction.Up) {
             this.xVel = 0;
             this.yVel = -this.speed;
-        } else {
+        } else  if (this.direction == Direction.Still) {
             this.xVel = 0;
             this.yVel = 0;
         }
@@ -60,11 +68,11 @@ public class Movable extends GameObject {
 
     // Checks walls around player at any location
     public boolean wallOnRight() {
-        if (getApp().grid.get(getGridY())[getGridX() + 1] == '1' || getApp().grid.get(getGridY())[getGridX() + 1] == '2'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '3'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '4'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '5'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '6') {
+        if (getGm().grid.get(getGridY())[getGridX() + 1] == '1' || getGm().grid.get(getGridY())[getGridX() + 1] == '2'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '3'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '4'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '5'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '6') {
             return true;
         } else {
             return false;
@@ -75,11 +83,11 @@ public class Movable extends GameObject {
         if (getGridX() == 0) {
             return true;
         }
-        if (getApp().grid.get(getGridY())[getGridX() - 1] == '1' || getApp().grid.get(getGridY())[getGridX() - 1] == '2'
-                || getApp().grid.get(getGridY())[getGridX() - 1] == '3'
-                || getApp().grid.get(getGridY())[getGridX() - 1] == '4'
-                || getApp().grid.get(getGridY())[getGridX() - 1] == '5'
-                || getApp().grid.get(getGridY())[getGridX() - 1] == '6') {
+        if (getGm().grid.get(getGridY())[getGridX() - 1] == '1' || getGm().grid.get(getGridY())[getGridX() - 1] == '2'
+                || getGm().grid.get(getGridY())[getGridX() - 1] == '3'
+                || getGm().grid.get(getGridY())[getGridX() - 1] == '4'
+                || getGm().grid.get(getGridY())[getGridX() - 1] == '5'
+                || getGm().grid.get(getGridY())[getGridX() - 1] == '6') {
             return true;
         } else {
             return false;
@@ -90,11 +98,11 @@ public class Movable extends GameObject {
         if (getGridY() == 0) {
             return true;
         }
-        if (getApp().grid.get(getGridY() - 1)[getGridX()] == '1' || getApp().grid.get(getGridY() - 1)[getGridX()] == '2'
-                || getApp().grid.get(getGridY() - 1)[getGridX()] == '3'
-                || getApp().grid.get(getGridY() - 1)[getGridX()] == '4'
-                || getApp().grid.get(getGridY() - 1)[getGridX()] == '5'
-                || getApp().grid.get(getGridY() - 1)[getGridX()] == '6') {
+        if (getGm().grid.get(getGridY() - 1)[getGridX()] == '1' || getGm().grid.get(getGridY() - 1)[getGridX()] == '2'
+                || getGm().grid.get(getGridY() - 1)[getGridX()] == '3'
+                || getGm().grid.get(getGridY() - 1)[getGridX()] == '4'
+                || getGm().grid.get(getGridY() - 1)[getGridX()] == '5'
+                || getGm().grid.get(getGridY() - 1)[getGridX()] == '6') {
             return true;
         } else {
             return false;
@@ -102,11 +110,11 @@ public class Movable extends GameObject {
     }
 
     public boolean wallBelow() {
-        if (getApp().grid.get(getGridY() + 1)[getGridX()] == '1' || getApp().grid.get(getGridY() + 1)[getGridX()] == '2'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '3'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '4'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '5'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '6') {
+        if (getGm().grid.get(getGridY() + 1)[getGridX()] == '1' || getGm().grid.get(getGridY() + 1)[getGridX()] == '2'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '3'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '4'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '5'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '6') {
             return true;
         } else {
             return false;
@@ -115,11 +123,11 @@ public class Movable extends GameObject {
 
     // Checks used when moving towards a wall
     public boolean collideWallOnRight() {
-        if (getApp().grid.get(getGridY())[getGridX() + 1] == '1' || getApp().grid.get(getGridY())[getGridX() + 1] == '2'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '3'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '4'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '5'
-                || getApp().grid.get(getGridY())[getGridX() + 1] == '6') {
+        if (getGm().grid.get(getGridY())[getGridX() + 1] == '1' || getGm().grid.get(getGridY())[getGridX() + 1] == '2'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '3'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '4'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '5'
+                || getGm().grid.get(getGridY())[getGridX() + 1] == '6') {
             return true;
         } else {
             return false;
@@ -127,24 +135,24 @@ public class Movable extends GameObject {
     }
 
     public boolean collideWallAbove() {
-        if (getApp().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '1'
-                || getApp().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '2'
-                || getApp().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '3'
-                || getApp().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '4'
-                || getApp().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '5'
-                || getApp().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '6') {
+        if (getGm().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '1'
+                || getGm().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '2'
+                || getGm().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '3'
+                || getGm().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '4'
+                || getGm().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '5'
+                || getGm().grid.get((int) Math.floor((getY() - 1) / 16))[getGridX()] == '6') {
             return true;
         } else
             return false;
     }
 
     public boolean collideWallOnLeft() {
-        if (getApp().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '1'
-                || getApp().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '2'
-                || getApp().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '3'
-                || getApp().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '4'
-                || getApp().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '5'
-                || getApp().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '6') {
+        if (getGm().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '1'
+                || getGm().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '2'
+                || getGm().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '3'
+                || getGm().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '4'
+                || getGm().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '5'
+                || getGm().grid.get(getGridY())[(int) Math.floor((getX() - 1) / 16)] == '6') {
             return true;
         } else {
             return false;
@@ -152,11 +160,11 @@ public class Movable extends GameObject {
     }
 
     public boolean collideWallBelow() {
-        if (getApp().grid.get(getGridY() + 1)[getGridX()] == '1' || getApp().grid.get(getGridY() + 1)[getGridX()] == '2'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '3'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '4'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '5'
-                || getApp().grid.get(getGridY() + 1)[getGridX()] == '6') {
+        if (getGm().grid.get(getGridY() + 1)[getGridX()] == '1' || getGm().grid.get(getGridY() + 1)[getGridX()] == '2'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '3'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '4'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '5'
+                || getGm().grid.get(getGridY() + 1)[getGridX()] == '6') {
             return true;
         } else {
             return false;
@@ -164,7 +172,7 @@ public class Movable extends GameObject {
     }
 
     // Getters
-    public String getDirection() {
+    public Direction getDirection() {
         return this.direction;
     }
 
@@ -205,7 +213,7 @@ public class Movable extends GameObject {
     }
 
     // Setters
-    public void setDirection(String direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 

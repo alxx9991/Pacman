@@ -7,13 +7,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Map {
-    private ArrayList<char[]> grid;
-    private App app;
+    private final ArrayList<char[]> grid;
+    private final GameManager gm;
 
-    public Map(File file, App app) {
-        this.app = app;
+    public Map(File file, GameManager gm) {
+        this.gm = gm;
         this.grid = readMapFile(file);
-        this.app.grid = grid;
+        this.gm.grid = grid;
     }
     
     //Convert map file into a grid of characters
@@ -49,40 +49,40 @@ public class Map {
                 if (this.grid.get(gridX)[gridY] == '1' || this.grid.get(gridX)[gridY] == '2'
                         || this.grid.get(gridX)[gridY] == '3' || this.grid.get(gridX)[gridY] == '4'
                         || this.grid.get(gridX)[gridY] == '5' || this.grid.get(gridX)[gridY] == '6') {
-                    Wall wall = new Wall(x, y, this.grid.get(gridX)[gridY], this.app, gridY, gridX);
-                    app.objects.add(wall);
-                    app.wallList.add(wall);
+                    Wall wall = new Wall(x, y, this.grid.get(gridX)[gridY], this.gm, gridY, gridX);
+                    gm.objects.add(wall);
+                    gm.wallList.add(wall);
                 } else if (this.grid.get(gridX)[gridY] == '7') {
-                    Fruit fruit = new Fruit(x, y, app.fruitImage, this.app, gridY, gridX);
-                    app.objects.add(fruit);
-                    app.fruits.add(fruit);
+                    Fruit fruit = new Fruit(x, y, gm.app.fruitImage, this.gm, gridY, gridX);
+                    gm.objects.add(fruit);
+                    gm.fruits.add(fruit);
                 } else if (this.grid.get(gridX)[gridY] == '8') {
-                    Fruit fruit = new SuperFruit(x, y, app.fruitImage, this.app, gridY, gridX);
-                    app.objects.add(fruit);
-                    app.fruits.add(fruit);
+                    Fruit fruit = new SuperFruit(x, y, gm.app.fruitImage, this.gm, gridY, gridX);
+                    gm.objects.add(fruit);
+                    gm.fruits.add(fruit);
                 } else if (this.grid.get(gridX)[gridY] == 'p') {
-                    Waka player = new Waka(x, y, app.faceRightImage, this.app, gridY, gridX);
-                    app.objects.add(player);
-                    app.player = player;
+                    Waka player = new Waka(x, y, gm.app.faceRightImage, this.gm, gridY, gridX);
+                    gm.objects.add(player);
+                    gm.player = player;
                 } else if (this.grid.get(gridX)[gridY] == 'a') {
-                    Ghost ghost = new Ambusher(x, y, app.ambusherImage, this.app, gridY, gridX);
-                    app.objects.add(ghost);
-                    app.ghosts.add(ghost);
+                    Ghost ghost = new Ambusher(x, y, gm.app.ambusherImage, this.gm, gridY, gridX);
+                    gm.objects.add(ghost);
+                    gm.ghosts.add(ghost);
                     ;
                 } else if (this.grid.get(gridX)[gridY] == 'c') {
-                    Ghost ghost = new Chaser(x, y, app.chaserImage, this.app, gridY, gridX);
-                    app.objects.add(ghost);
-                    app.ghosts.add(ghost);
+                    Ghost ghost = new Chaser(x, y, gm.app.chaserImage, this.gm, gridY, gridX);
+                    gm.objects.add(ghost);
+                    gm.ghosts.add(ghost);
                     ;
                 } else if (this.grid.get(gridX)[gridY] == 'i') {
-                    Ghost ghost = new Ignorant(x, y, app.ignorantImage, this.app, gridY, gridX);
-                    app.objects.add(ghost);
-                    app.ghosts.add(ghost);
+                    Ghost ghost = new Ignorant(x, y, gm.app.ignorantImage, this.gm, gridY, gridX);
+                    gm.objects.add(ghost);
+                    gm.ghosts.add(ghost);
                     ;
                 } else if (this.grid.get(gridX)[gridY] == 'w') {
-                    Ghost ghost = new Whim(x, y, app.whimImage, this.app, gridY, gridX);
-                    app.objects.add(ghost);
-                    app.ghosts.add(ghost);
+                    Ghost ghost = new Whim(x, y, gm.app.whimImage, this.gm, gridY, gridX);
+                    gm.objects.add(ghost);
+                    gm.ghosts.add(ghost);
                     ;
                 }
                 x += 16;
