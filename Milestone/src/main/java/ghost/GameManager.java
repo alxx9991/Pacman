@@ -48,16 +48,14 @@ public class GameManager {
 
     public void setUp() {
         this.readConfig();
-
+        File file = new File(this.mapFileName);
+        Map map = new Map(file, this);
+        map.generateObjects();
         for (Ghost ghost : ghosts) {
             if (ghost instanceof Whim) {
                 ((Whim) ghost).setChaser();
             }
         }
-        
-        File file = new File(this.mapFileName);
-        Map map = new Map(file, this);
-        map.generateObjects();
     }
 
     public void tick() {
@@ -71,22 +69,26 @@ public class GameManager {
                 fruit.tick();
             }
             for (GameObject o : objects) {
-                o.draw();
+                if (o.getSprite() != null) {
+                    o.draw();
+                }
             }
             if (player.getLives() == 0 || Fruit.fruitLeft(this) == false) {
                 gameEnded = true;
             }
         } else { // In between games
             gameEndedCount++;
-            if (player.getLives() == 0) {
-                app.textFont(app.font, 20);
-                app.fill(255);
-                app.text("GAME OVER", 132, 240);
-            } else if (Fruit.fruitLeft(this) == false) {
-                app.textFont(app.font, 20);
-                app.fill(255);
-                app.text("YOU WIN", 152, 240);
-            }
+            if (app.font != null) {
+                if (player.getLives() == 0) {
+                    app.textFont(app.font, 20);
+                    app.fill(255);
+                    app.text("GAME OVER", 132, 240);
+                } else if (Fruit.fruitLeft(this) == false) {
+                    app.textFont(app.font, 20);
+                    app.fill(255);
+                    app.text("YOU WIN", 152, 240);
+                }
+            } 
             if (gameEndedCount == 600) {
                 restartGame();
             }

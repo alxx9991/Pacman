@@ -94,13 +94,13 @@ public class Waka extends Movable {
                 } else {
                     getGm().nextMove = null;
                 }
-            } else if (getGm().nextMove.equals(Direction.Up)) {
+            } else {
                 if (!wallAbove()) {
                     setDirection(Direction.Up);
                 } else {
                     getGm().nextMove = null;
                 }
-            }
+            } 
             return;
         }
 

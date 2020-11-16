@@ -8,8 +8,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
     @Test 
-    public void simpleTest() {
-        App classUnderTest = new App();
-        assertNotNull(classUnderTest);
+    public void constructorTest() {
+        App testApp = new App();
+        assertNotNull(testApp);
     }
+    
+    
+    // public static void main(String[] args) {
+    //     App testApp = new App();
+    //     testApp.gameManager.setUp();
+    //     testApp.draw();
+    // }
 }

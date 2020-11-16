@@ -1,8 +1,8 @@
-ghost/AppTest.java
- ghost.AppTest
-ghost/FruitTest.java
- ghost.FruitTest
-ghost/WallTest.java
- ghost.WallTest
+ghost/GameManagerTest.java
+ ghost.GameManagerTest
 ghost/MapTest.java
  ghost.MapTest
+ghost/AppTest.java
+ ghost.AppTest
+ghost/WakaTest.java
+ ghost.WakaTest

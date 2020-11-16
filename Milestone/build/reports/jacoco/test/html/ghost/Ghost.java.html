@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ghost.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Ghost.java</span></div><h1>Ghost.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public abstract class Ghost extends Movable {
+    // Scatter/Chase mode timer
+    private Mode mode;
+    private int frameCount;
+    private int cycleIndex;
+    private long cycleLength;
+    private long frightenedCount;
+    private long frightenedLength;
+    private Mode savedMode;
+    private boolean alive;
+
+    // Corner target coordinate
+    private final int[] corner;
+
+    public Ghost(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY, int cornerX, int cornerY) {
+<span class="fc" id="L23">        super(x, y, sprite, gm, gridX, gridY);</span>
+<span class="fc" id="L24">        this.alive = true;</span>
+
+        // Modes
+<span class="fc" id="L27">        this.mode = Mode.Scatter;</span>
+<span class="fc" id="L28">        this.frameCount = 0;</span>
+<span class="fc" id="L29">        this.cycleIndex = 0;</span>
+<span class="fc" id="L30">        this.cycleLength = getGm().modeLengths.get(cycleIndex) * 60;</span>
+<span class="fc" id="L31">        this.frameCount = 0;</span>
+<span class="fc" id="L32">        this.frightenedLength = getGm().frightenedLength * 60;</span>
+
+        // Collision
+<span class="fc" id="L35">        setBorderTop(getY() + 2);</span>
+<span class="fc" id="L36">        setBorderBot(getY() + 23);</span>
+<span class="fc" id="L37">        setBorderLeft(getX() + 2);</span>
+<span class="fc" id="L38">        setBorderRight(getX() + 25);</span>
+
+        // Set corner
+<span class="fc" id="L41">        this.corner = new int[2];</span>
+<span class="fc" id="L42">        this.corner[0] = cornerX;</span>
+<span class="fc" id="L43">        this.corner[1] = cornerY;</span>
+
+<span class="fc" id="L45">    }</span>
+
+<span class="fc" id="L47">public enum Mode {</span>
+<span class="fc" id="L48">    Scatter,</span>
+<span class="fc" id="L49">    Chase,</span>
+<span class="fc" id="L50">    Frightened</span>
+}
+    public void draw() {
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (alive) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (this.mode != Mode.Frightened) { </span>
+<span class="nc" id="L55">                getGm().app.image(getSprite(), getX() - 5, getY() - 6);</span>
+            } else { //If frightened, draw frightened image
+<span class="nc" id="L57">                getGm().app.image(getGm().app.frightenedImage, getX() - 5, getY() - 6);</span>
+            }
+        }
+<span class="nc" id="L60">    }</span>
+
+    public void tick() {
+<span class="fc" id="L63">        checkIfFrightened();</span>
+<span class="fc" id="L64">        checkIfAlive();</span>
+<span class="fc" id="L65">        selectMode();</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (alive) {</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">            if (getGm().debug) {</span>
+<span class="nc" id="L68">                drawTargetLine();</span>
+            }
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (canChangeDirection()) {</span>
+<span class="fc" id="L71">                selectDirection();</span>
+            }
+<span class="fc" id="L73">            move();</span>
+<span class="fc" id="L74">            setCollisionBorders();</span>
+        }
+<span class="fc" id="L76">    }</span>
+    
+    public void setCollisionBorders() {
+        // Set collision borders
+<span class="fc" id="L80">        setBorderTop(getY() + 2);</span>
+<span class="fc" id="L81">        setBorderBot(getY() + 23);</span>
+<span class="fc" id="L82">        setBorderLeft(getX() + 2);</span>
+<span class="fc" id="L83">        setBorderRight(getX() + 25);</span>
+<span class="fc" id="L84">    }</span>
+    
+    //Draws lines to target location
+    public void drawTargetLine() {
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (this.mode == Mode.Chase) {</span>
+<span class="nc" id="L89">            int[] vector = generateVectors(getGm().player.getX(), getGm().player.getY());</span>
+<span class="nc" id="L90">            getGm().app.g.line(vector[0] + this.getX(), vector[1] + this.getY(), this.getX(), this.getY());</span>
+<span class="nc" id="L91">            getGm().app.g.stroke(126);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        } else if (this.mode == Mode.Scatter) {</span>
+<span class="nc" id="L93">            int[] vector = generateVectors(this.corner[0], this.corner[1]);</span>
+<span class="nc" id="L94">            getGm().app.g.line(this.getX(), this.getY(), vector[0] + this.getX(), vector[1] + this.getY());</span>
+<span class="nc" id="L95">            getGm().app.g.stroke(126);</span>
+<span class="nc" id="L96">        } else {</span>
+<span class="nc" id="L97">            return;</span>
+        }
+<span class="nc" id="L99">    }</span>
+    
+    //Sets the direction of travel based on generation of next move
+    public void selectDirection() {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (this.mode == Mode.Frightened) {</span>
+<span class="nc" id="L104">            setDirection(generateNextMove(0, 0));</span>
+<span class="nc" id="L105">            return;</span>
+        }
+        //If ghost is still, initialise travel direction
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (getDirection() == Direction.Still) {</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">            if (this.mode == Mode.Chase) {</span>
+<span class="nc" id="L110">                setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">            } else if (this.mode == Mode.Scatter) {</span>
+<span class="fc" id="L112">                setDirection(generateNextMove(this.corner[0], this.corner[1]));</span>
+            }
+        }
+        //Check if location appropriate for change of direction (intersection)
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (canChangeDirection()) {</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (this.mode.equals(Mode.Scatter)) {</span>
+<span class="fc" id="L118">                setDirection(generateNextMove(this.corner[0], this.corner[1]));</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            } else if (this.mode.equals(Mode.Chase)) {</span>
+<span class="nc" id="L120">                setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));</span>
+            }
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (getDirection() == null) {</span>
+<span class="nc" id="L123">                setDirection(Direction.Still);</span>
+            }
+        }
+<span class="fc" id="L126">    }</span>
+    
+    //Selects mode based on timer and mode lengths configuration
+    public void selectMode() {
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (this.mode != Mode.Frightened) {</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (this.frameCount &lt; this.cycleLength) {</span>
+<span class="fc" id="L132">                this.frameCount++;</span>
+            } else {
+<span class="nc" id="L134">                this.frameCount = 0;</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                if (this.cycleIndex &lt; getGm().modeLengths.size() - 1) {</span>
+<span class="nc" id="L136">                    this.cycleIndex++;</span>
+<span class="nc" id="L137">                    this.cycleLength = getGm().modeLengths.get(this.cycleIndex) * 60;</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                    if (this.cycleIndex % 2 == 1) {</span>
+<span class="nc" id="L139">                        this.mode = Mode.Chase;</span>
+                    } else {
+<span class="nc" id="L141">                        this.mode = Mode.Scatter;</span>
+                    }
+                } else {
+<span class="nc" id="L144">                    this.cycleIndex = 0;</span>
+<span class="nc" id="L145">                    this.cycleLength = getGm().modeLengths.get(this.cycleIndex) * 60;</span>
+<span class="nc" id="L146">                    this.mode = Mode.Chase;</span>
+                }
+            }
+        }
+<span class="fc" id="L150">    }</span>
+    
+    //Generates next move given a list of preferences for direction of travel
+    public Direction generateNextMove(int targetx, int targety) {
+<span class="fc" id="L154">        int[] vector = generateVectors(targetx, targety);</span>
+<span class="fc" id="L155">        ArrayList&lt;Direction&gt; preferenceList = generatePreferences(getDirection(), vector);</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        for (Direction preference : preferenceList) {</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">            if (canGoDirection(preference)) {</span>
+<span class="fc" id="L158">                return preference; // Go through preferences in order, execute first one which is valid</span>
+            }
+<span class="fc" id="L160">        }</span>
+<span class="nc" id="L161">        return preferenceList.get(preferenceList.size() - 1); //Default use last preference</span>
+    }
+    
+    //Check that ghost is at an intersection, and completely within a grid, so it can change direction
+    public boolean canChangeDirection() {
+<span class="pc bpc" id="L166" title="1 of 4 branches missed.">        if (this.getX() % 16 == 0 &amp;&amp; this.getY() % 16 == 0) {</span>
+<span class="pc bpc" id="L167" title="2 of 4 branches missed.">            if (getDirection() == Direction.Up || getDirection() == Direction.Down) {</span>
+<span class="nc bnc" id="L168" title="All 8 branches missed.">                if (!this.wallOnLeft() || !this.wallOnRight() || collideWallAbove() || collideWallBelow()) {</span>
+<span class="nc" id="L169">                    return true;</span>
+                } else {
+<span class="nc" id="L171">                    return false;</span>
+                }
+<span class="fc bfc" id="L173" title="All 4 branches covered.">            } else if (getDirection() == Direction.Left || getDirection() == Direction.Right) {</span>
+<span class="pc bpc" id="L174" title="3 of 8 branches missed.">                if (!this.wallBelow() || !this.wallAbove() || collideWallOnLeft() || collideWallOnRight()) {</span>
+<span class="fc" id="L175">                    return true;</span>
+                } else {
+<span class="fc" id="L177">                    return false;</span>
+                }
+            } else {
+<span class="fc" id="L180">                return true;</span>
+            }
+        } else {
+<span class="fc" id="L183">            return false;</span>
+        }
+    }
+    
+    public boolean canGoDirection(Direction direction) {
+        // Determine if can go in a particular direction based on wall locations
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (direction == Direction.Right) {</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            if (wallOnRight()) {</span>
+<span class="nc" id="L191">                return false;</span>
+            }
+<span class="fc" id="L193">            return true;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        } else if (direction == Direction.Left) {</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            if (wallOnLeft()) {</span>
+<span class="nc" id="L196">                return false;</span>
+            } else {
+<span class="fc" id="L198">                return true;</span>
+            }
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        } else if (direction == Direction.Up) {</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (wallAbove()) {</span>
+<span class="nc" id="L202">                return false;</span>
+            } else {
+<span class="nc" id="L204">                return true;</span>
+            }
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        } else if (direction == Direction.Down) {</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if (wallBelow()) {</span>
+<span class="fc" id="L208">                return false;</span>
+            } else {
+<span class="nc" id="L210">                return true;</span>
+            }
+        } else {
+<span class="nc" id="L213">            return false;</span>
+        }
+    }
+    
+    public abstract int[] generateVectors(int targetx, int targety);
+    
+    
+    //Generate list of moves based on intended vector in preferred order
+    public ArrayList&lt;Direction&gt; generatePreferences(Direction direction, int[] vector) {
+<span class="fc" id="L222">        ArrayList&lt;Direction&gt; preferenceList = new ArrayList&lt;Direction&gt;();</span>
+<span class="fc" id="L223">        int vectorx = vector[0];</span>
+<span class="fc" id="L224">        int vectory = vector[1];</span>
+
+<span class="fc bfc" id="L226" title="All 4 branches covered.">        if (vectorx &gt;= 0 &amp;&amp; vectory &gt;= 0) {</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            if (vectorx &gt;= vectory) { // want to go right and down</span>
+<span class="nc" id="L228">                preferenceList.add(Direction.Right);</span>
+<span class="nc" id="L229">                preferenceList.add(Direction.Down);</span>
+<span class="nc" id="L230">                preferenceList.add(Direction.Up);</span>
+<span class="nc" id="L231">                preferenceList.add(Direction.Left);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            } else if (vectorx &lt;= vectory) { // want to go down and right</span>
+<span class="fc" id="L233">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L234">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L235">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L236">                preferenceList.add(Direction.Up);</span>
+            }
+<span class="pc bpc" id="L238" title="1 of 4 branches missed.">        } else if (vectorx &gt;= 0 &amp;&amp; vectory &lt;= 0) {</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">            if (vectorx &gt;= -vectory) { // want to go right and up</span>
+<span class="fc" id="L240">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L241">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L242">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L243">                preferenceList.add(Direction.Left);</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            } else if (vectorx &lt;= -vectory) { // want to go up and right</span>
+<span class="nc" id="L245">                preferenceList.add(Direction.Up);</span>
+<span class="nc" id="L246">                preferenceList.add(Direction.Right);</span>
+<span class="nc" id="L247">                preferenceList.add(Direction.Left);</span>
+<span class="nc" id="L248">                preferenceList.add(Direction.Down);</span>
+            }
+<span class="pc bpc" id="L250" title="1 of 4 branches missed.">        } else if (vectorx &lt;= 0 &amp;&amp; vectory &lt;= 0) {</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            if (-vectorx &gt;= -vectory) { // want to go left and up</span>
+<span class="fc" id="L252">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L253">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L254">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L255">                preferenceList.add(Direction.Right);</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">            } else if (-vectorx &lt;= -vectory) { // want to go up and left</span>
+<span class="nc" id="L257">                preferenceList.add(Direction.Up);</span>
+<span class="nc" id="L258">                preferenceList.add(Direction.Left);</span>
+<span class="nc" id="L259">                preferenceList.add(Direction.Right);</span>
+<span class="nc" id="L260">                preferenceList.add(Direction.Down);</span>
+            }
+        } else {
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">            if (-vectorx &gt;= vectory) { // want to go left and down</span>
+<span class="nc" id="L264">                preferenceList.add(Direction.Left);</span>
+<span class="nc" id="L265">                preferenceList.add(Direction.Down);</span>
+<span class="nc" id="L266">                preferenceList.add(Direction.Up);</span>
+<span class="nc" id="L267">                preferenceList.add(Direction.Right);</span>
+<span class="pc bpc" id="L268" title="1 of 2 branches missed.">            } else if (-vectorx &lt;= vectory) { // want to go down and left</span>
+<span class="fc" id="L269">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L270">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L271">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L272">                preferenceList.add(Direction.Up);</span>
+            }
+        }
+
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">        if (this.mode.equals(Mode.Frightened)) {</span>
+            // Randomise preference list if in frightened mode
+<span class="nc" id="L278">            Collections.shuffle(preferenceList);</span>
+        } 
+
+        // change opposite direction of movement as last preference
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (direction == Direction.Left) {</span>
+<span class="fc" id="L283">            preferenceList.remove(Direction.Right);</span>
+<span class="fc" id="L284">            preferenceList.add(Direction.Right);</span>
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">        } else if (direction == Direction.Right) {</span>
+<span class="nc" id="L286">            preferenceList.remove(Direction.Left);</span>
+<span class="nc" id="L287">            preferenceList.add(Direction.Left);</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        } else if (direction == Direction.Up) {</span>
+<span class="nc" id="L289">            preferenceList.remove(Direction.Down);</span>
+<span class="nc" id="L290">            preferenceList.add(Direction.Down);</span>
+        } else {
+<span class="fc" id="L292">            preferenceList.remove(Direction.Up);</span>
+<span class="fc" id="L293">            preferenceList.add(Direction.Up);</span>
+        }
+        
+<span class="fc" id="L296">        return preferenceList;</span>
+    }
+    //Timer for frightened mode
+    public void checkIfFrightened() {
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">        if (this.mode == Mode.Frightened) {</span>
+<span class="nc" id="L301">            this.frightenedCount++;</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">            if (this.frightenedCount == frightenedLength) {</span>
+<span class="nc" id="L303">                this.mode = this.savedMode;</span>
+<span class="nc" id="L304">                this.frightenedCount = 0;</span>
+            }
+        }
+<span class="fc" id="L307">    }</span>
+    //If dead, move ghost location off map
+    public void checkIfAlive() {
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if (!this.alive) {</span>
+        }
+<span class="fc" id="L312">    }</span>
+
+    //Restart ghost from start of game
+    public void restartGhost() {
+<span class="fc" id="L316">        setAlive(true);</span>
+
+        // Restart coordinates
+<span class="fc" id="L319">        setX(getStartX());</span>
+<span class="fc" id="L320">        setY(getStartY());</span>
+<span class="fc" id="L321">        setGridX((int) Math.floor(getX() / 16));</span>
+<span class="fc" id="L322">        setGridY((int) Math.floor(getY() / 16));</span>
+<span class="fc" id="L323">        setCollisionBorders();</span>
+
+        // Restart direction
+<span class="fc" id="L326">        setDirection(Direction.Still);</span>
+<span class="fc" id="L327">        setXVel(0);</span>
+<span class="fc" id="L328">        setYVel(0);</span>
+
+        // Restart modes
+<span class="fc" id="L331">        setMode(Mode.Scatter);</span>
+<span class="fc" id="L332">        frightenedCount = 0;</span>
+<span class="fc" id="L333">        this.frameCount = 0;</span>
+<span class="fc" id="L334">        this.cycleIndex = 0;</span>
+<span class="fc" id="L335">        this.cycleLength = getGm().modeLengths.get(cycleIndex) * 60;</span>
+<span class="fc" id="L336">        this.frameCount = 0;</span>
+<span class="fc" id="L337">        this.frightenedLength = getGm().frightenedLength * 60;</span>
+
+<span class="fc" id="L339">    }</span>
+    
+    //Getters and setters
+    public Mode getMode() {
+<span class="fc" id="L343">        return this.mode;</span>
+    }
+
+    public void setMode(Mode mode) {
+<span class="fc" id="L347">        this.mode = mode;</span>
+<span class="fc" id="L348">    }</span>
+
+    public Mode getSavedMode() {
+<span class="nc" id="L351">        return this.savedMode;</span>
+    }
+
+    public void setSavedMode(Mode savedMode) {
+<span class="nc" id="L355">        this.savedMode = savedMode;</span>
+<span class="nc" id="L356">    }</span>
+
+    public int[] getCorner() {
+<span class="nc" id="L359">        return this.corner;</span>
+    }
+
+    public boolean isAlive() {
+<span class="fc" id="L363">        return this.alive;</span>
+    }
+
+    public void setAlive(boolean alive) {
+<span class="fc" id="L367">        this.alive = alive;</span>
+<span class="fc" id="L368">    }</span>
+
+    public void setFrightenedCount(long frightenedCount) {
+<span class="nc" id="L371">        this.frightenedCount = frightenedCount;</span>
+<span class="nc" id="L372">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
