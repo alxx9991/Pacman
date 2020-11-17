@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import ghost.Ghost.Mode;
 import ghost.Movable.Direction;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 
 public class WhimTest {
