@@ -51,7 +51,7 @@ public abstract class Movable extends GameObject {
         } else if (this.direction == Direction.Up) {
             this.xVel = 0;
             this.yVel = -this.speed;
-        } else  if (this.direction == Direction.Still) {
+        } else {
             this.xVel = 0;
             this.yVel = 0;
         }
@@ -63,7 +63,6 @@ public abstract class Movable extends GameObject {
         // Set grid coordinates
         setGridX((int) Math.floor(getX() / 16));
         setGridY((int) Math.floor(getY() / 16));
-
     }
 
     // Checks walls around player at any location

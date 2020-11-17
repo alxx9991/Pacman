@@ -52,31 +52,31 @@ public abstract class GameObject {
 
     // Setters
     public void setX(int x) {
-<span class="pc bpc" id="L55" title="2 of 4 branches missed.">        if (x &gt; 448 || x &lt; 0) {</span>
-<span class="nc" id="L56">            throw new OutOfMapException();</span>
+<span class="fc bfc" id="L55" title="All 4 branches covered.">        if (x &gt; 448 || x &lt; 0) {</span>
+<span class="fc" id="L56">            throw new OutOfMapException();</span>
         } else {
 <span class="fc" id="L58">            this.x = x;</span>
         }
 <span class="fc" id="L60">    }</span>
 
     public void setY(int y) {
-<span class="pc bpc" id="L63" title="2 of 4 branches missed.">        if (y &gt; 576 || x &lt; 0) {</span>
-<span class="nc" id="L64">            throw new OutOfMapException();</span>
+<span class="fc bfc" id="L63" title="All 4 branches covered.">        if (y &gt; 576 || y &lt; 0) {</span>
+<span class="fc" id="L64">            throw new OutOfMapException();</span>
         } else {
 <span class="fc" id="L66">            this.y = y;</span>
         }
 <span class="fc" id="L68">    }</span>
 
     public void setGridX(int gridX) {
-<span class="pc bpc" id="L71" title="2 of 4 branches missed.">        if (this.gridX &gt; 28 || this.gridX &lt; 0) {</span>
-<span class="nc" id="L72">            throw new OutOfMapException();</span>
+<span class="fc bfc" id="L71" title="All 4 branches covered.">        if (gridX &gt; 28 || gridX &lt; 0) {</span>
+<span class="fc" id="L72">            throw new OutOfMapException();</span>
         }
 <span class="fc" id="L74">        this.gridX = gridX;</span>
 <span class="fc" id="L75">    }</span>
 
     public void setGridY(int gridY) {
-<span class="pc bpc" id="L78" title="2 of 4 branches missed.">        if (this.gridY &gt; 36 || this.gridY &lt; 0) {</span>
-<span class="nc" id="L79">            throw new OutOfMapException();</span>
+<span class="fc bfc" id="L78" title="All 4 branches covered.">        if (gridY &gt; 36 || gridY &lt; 0) {</span>
+<span class="fc" id="L79">            throw new OutOfMapException();</span>
         }
 <span class="fc" id="L81">        this.gridY = gridY;</span>
 <span class="fc" id="L82">    }</span>
@@ -90,7 +90,7 @@ class OutOfMapException extends RuntimeException {
     private static final long serialVersionUID = -1331806908066895592L;
 
     public OutOfMapException() {
-<span class="nc" id="L93">        super(&quot;Character out of map bounds&quot;);</span>
-<span class="nc" id="L94">    }</span>
+<span class="fc" id="L93">        super(&quot;Character out of map bounds&quot;);</span>
+<span class="fc" id="L94">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

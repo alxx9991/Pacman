@@ -33,4 +33,12 @@ public class SuperFruit extends Fruit {
         setAlive(true);
         this.activated = false;
     }
+
+    public boolean isActivated() {
+        return this.activated;
+    }
+
+    public void setActivated(boolean b) {
+        this.activated = b;
+    }
 }

@@ -5,6 +5,8 @@ import processing.core.PImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.management.RuntimeErrorException;
+
 public abstract class Ghost extends Movable {
     // Scatter/Chase mode timer
     private Mode mode;
@@ -61,7 +63,6 @@ public enum Mode {
 
     public void tick() {
         checkIfFrightened();
-        checkIfAlive();
         selectMode();
         if (alive) {
             if (getGm().debug) {
@@ -85,16 +86,15 @@ public enum Mode {
     
     //Draws lines to target location
     public void drawTargetLine() {
+        int[] vector = null;
         if (this.mode == Mode.Chase) {
-            int[] vector = generateVectors(getGm().player.getX(), getGm().player.getY());
-            getGm().app.g.line(vector[0] + this.getX(), vector[1] + this.getY(), this.getX(), this.getY());
-            getGm().app.g.stroke(126);
+            vector = generateVectors(getGm().player.getX(), getGm().player.getY());
         } else if (this.mode == Mode.Scatter) {
-            int[] vector = generateVectors(this.corner[0], this.corner[1]);
+            vector = generateVectors(this.corner[0], this.corner[1]);
+        } 
+        if (this.mode != Mode.Frightened && getGm().app.g != null) {
             getGm().app.g.line(this.getX(), this.getY(), vector[0] + this.getX(), vector[1] + this.getY());
             getGm().app.g.stroke(126);
-        } else {
-            return;
         }
     }
     
@@ -108,7 +108,7 @@ public enum Mode {
         if (getDirection() == Direction.Still) {
             if (this.mode == Mode.Chase) {
                 setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));
-            } else if (this.mode == Mode.Scatter) {
+            } else {
                 setDirection(generateNextMove(this.corner[0], this.corner[1]));
             }
         }
@@ -116,11 +116,8 @@ public enum Mode {
         if (canChangeDirection()) {
             if (this.mode.equals(Mode.Scatter)) {
                 setDirection(generateNextMove(this.corner[0], this.corner[1]));
-            } else if (this.mode.equals(Mode.Chase)) {
+            } else {
                 setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));
-            }
-            if (getDirection() == null) {
-                setDirection(Direction.Still);
             }
         }
     }
@@ -152,13 +149,15 @@ public enum Mode {
     //Generates next move given a list of preferences for direction of travel
     public Direction generateNextMove(int targetx, int targety) {
         int[] vector = generateVectors(targetx, targety);
+        Direction preferredMove = null;
         ArrayList<Direction> preferenceList = generatePreferences(getDirection(), vector);
         for (Direction preference : preferenceList) {
             if (canGoDirection(preference)) {
-                return preference; // Go through preferences in order, execute first one which is valid
+                preferredMove = preference;
+                break;// Go through preferences in order, execute first one which is valid
             }
         }
-        return preferenceList.get(preferenceList.size() - 1); //Default use last preference
+        return preferredMove; //Default use last preference
     }
     
     //Check that ghost is at an intersection, and completely within a grid, so it can change direction
@@ -198,20 +197,19 @@ public enum Mode {
                 return true;
             }
         } else if (direction == Direction.Up) {
+            //throw new RuntimeException();
             if (wallAbove()) {
                 return false;
             } else {
                 return true;
             }
-        } else if (direction == Direction.Down) {
+        } else {
             if (wallBelow()) {
                 return false;
             } else {
                 return true;
             }
-        } else {
-            return false;
-        }
+        } 
     }
     
     public abstract int[] generateVectors(int targetx, int targety);
@@ -229,7 +227,7 @@ public enum Mode {
                 preferenceList.add(Direction.Down);
                 preferenceList.add(Direction.Up);
                 preferenceList.add(Direction.Left);
-            } else if (vectorx <= vectory) { // want to go down and right
+            } else { // want to go down and right
                 preferenceList.add(Direction.Down);
                 preferenceList.add(Direction.Right);
                 preferenceList.add(Direction.Left);
@@ -241,7 +239,7 @@ public enum Mode {
                 preferenceList.add(Direction.Up);
                 preferenceList.add(Direction.Down);
                 preferenceList.add(Direction.Left);
-            } else if (vectorx <= -vectory) { // want to go up and right
+            } else { // want to go up and right
                 preferenceList.add(Direction.Up);
                 preferenceList.add(Direction.Right);
                 preferenceList.add(Direction.Left);
@@ -253,7 +251,7 @@ public enum Mode {
                 preferenceList.add(Direction.Up);
                 preferenceList.add(Direction.Down);
                 preferenceList.add(Direction.Right);
-            } else if (-vectorx <= -vectory) { // want to go up and left
+            } else { // want to go up and left
                 preferenceList.add(Direction.Up);
                 preferenceList.add(Direction.Left);
                 preferenceList.add(Direction.Right);
@@ -265,7 +263,7 @@ public enum Mode {
                 preferenceList.add(Direction.Down);
                 preferenceList.add(Direction.Up);
                 preferenceList.add(Direction.Right);
-            } else if (-vectorx <= vectory) { // want to go down and left
+            } else { // want to go down and left
                 preferenceList.add(Direction.Down);
                 preferenceList.add(Direction.Left);
                 preferenceList.add(Direction.Right);
@@ -303,11 +301,6 @@ public enum Mode {
                 this.mode = this.savedMode;
                 this.frightenedCount = 0;
             }
-        }
-    }
-    //If dead, move ghost location off map
-    public void checkIfAlive() {
-        if (!this.alive) {
         }
     }
 
@@ -369,5 +362,33 @@ public enum Mode {
 
     public void setFrightenedCount(long frightenedCount) {
         this.frightenedCount = frightenedCount;
+    }
+    
+    public void setCycleLength(long cycleLength) {
+        this.cycleLength = cycleLength;
+    }
+
+    public void setFrameCount(int frameCount) {
+        this.frameCount = frameCount;
+    }
+
+    public int getFrameCount() {
+        return this.frameCount;
+    }
+
+    public void setCycleIndex(int index) {
+        this.cycleIndex = index;
+    }
+
+    public int getCycleIndex() {
+        return this.cycleIndex;
+    }
+    
+    public long getFrightenedCount() {
+        return this.frightenedCount;
+    }
+
+    public void setFrightenedLength(long length) {
+        this.frightenedLength = length;
     }
 }

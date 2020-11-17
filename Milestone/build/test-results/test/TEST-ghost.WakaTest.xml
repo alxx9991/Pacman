@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ghost.WakaTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-11-16T05:11:10" hostname="vlan-2644-10-16-180-245.student.wireless.sydney.edu.au" time="0.026">
+<testsuite name="ghost.WakaTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2020-11-17T04:43:51" hostname="vlan-2644-10-16-180-245.student.wireless.sydney.edu.au" time="0.077">
   <properties/>
-  <testcase name="wakaMoveTest()" classname="ghost.WakaTest" time="0.026"/>
+  <testcase name="testResetIfDead()" classname="ghost.WakaTest" time="0.042"/>
+  <testcase name="bottomRightCorner()" classname="ghost.WakaTest" time="0.007"/>
+  <testcase name="drawTest()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="testSetSpriteOpen()" classname="ghost.WakaTest" time="0.003"/>
+  <testcase name="wakaIntersectionMoveTest()" classname="ghost.WakaTest" time="0.006"/>
+  <testcase name="testDetermineSpriteOpen()" classname="ghost.WakaTest" time="0.003"/>
+  <testcase name="nonIntersectionMoveTest()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="topRightCorner()" classname="ghost.WakaTest" time="0.001"/>
+  <testcase name="bottomLeftCorner()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="topLeftCorner()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="testCollisions()" classname="ghost.WakaTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -12,27 +12,27 @@ public class Ambusher extends Ghost {
 <span class="fc" id="L12">        vector[0] = targetx - this.getX();</span>
 <span class="fc" id="L13">        vector[1] = targety - this.getY();</span>
 
-<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        if (getMode().equals(Mode.Chase)) {</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">        if (getMode().equals(Mode.Chase)) {</span>
             //Add 64 (4 grid spaces) in the player's direction of travel
-<span class="nc bnc" id="L17" title="All 2 branches missed.">            if (getGm().player.getDirection() == Direction.Right) {</span>
-<span class="nc" id="L18">                vector[0] += 64;</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">                if (getX() + vector[0] &gt; 448) {</span>
-<span class="nc" id="L20">                    vector[0] = 448 - getX();</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">            if (getGm().player.getDirection() == Direction.Right) {</span>
+<span class="fc" id="L18">                vector[0] += 64;</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">                if (getX() + vector[0] &gt; 448) {</span>
+<span class="fc" id="L20">                    vector[0] = 448 - getX();</span>
                 }
-<span class="nc bnc" id="L22" title="All 2 branches missed.">            } else if (getGm().player.getDirection() == Direction.Left) {</span>
-<span class="nc" id="L23">                vector[0] -= 64;</span>
-<span class="nc bnc" id="L24" title="All 2 branches missed.">                if (getX() + vector[0] &lt; 0) {</span>
-<span class="nc" id="L25">                    vector[0] = -getX();</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            } else if (getGm().player.getDirection() == Direction.Left) {</span>
+<span class="fc" id="L23">                vector[0] -= 64;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">                if (getX() + vector[0] &lt; 0) {</span>
+<span class="fc" id="L25">                    vector[0] = -getX();</span>
                 }
-<span class="nc bnc" id="L27" title="All 2 branches missed.">            } else if (getGm().player.getDirection() == Direction.Up) {</span>
-<span class="nc" id="L28">                vector[1] -= 64;</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">                if (getY() + vector[1] &lt; 0) {</span>
-<span class="nc" id="L30">                    vector[1] = -getY();</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            } else if (getGm().player.getDirection() == Direction.Up) {</span>
+<span class="fc" id="L28">                vector[1] -= 64;</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                if (getY() + vector[1] &lt; 0) {</span>
+<span class="fc" id="L30">                    vector[1] = -getY();</span>
                 }
-<span class="nc bnc" id="L32" title="All 2 branches missed.">            } else if ((getGm().player.getDirection() == Direction.Down)) {</span>
-<span class="nc" id="L33">                vector[1] += 64;</span>
-<span class="nc bnc" id="L34" title="All 2 branches missed.">                if (getY() + vector[1] &gt; 576) {</span>
-<span class="nc" id="L35">                    vector[1] = 576 - getY();</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            } else if ((getGm().player.getDirection() == Direction.Down)) {</span>
+<span class="fc" id="L33">                vector[1] += 64;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                if (getY() + vector[1] &gt; 576) {</span>
+<span class="fc" id="L35">                    vector[1] = 576 - getY();</span>
                 }
             }
         }

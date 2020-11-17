@@ -16,9 +16,9 @@ public class Ignorant extends Ghost {
 <span class="fc" id="L16">        double distance = Math.pow(Math.pow((double) vector[0] / 16.0, 2.0) + Math.pow((double) vector[1] / 16.0, 2.0), 0.5);</span>
         
         //If in chase mode and distance is less than 8, target corner
-<span class="pc bpc" id="L19" title="3 of 4 branches missed.">        if (getMode().equals(Mode.Chase) &amp;&amp; distance &lt;= 8) {</span>
-<span class="nc" id="L20">            vector[0] = getCorner()[0] - getX();</span>
-<span class="nc" id="L21">            vector[1] = getCorner()[1] - getY();</span>
+<span class="fc bfc" id="L19" title="All 4 branches covered.">        if (getMode().equals(Mode.Chase) &amp;&amp; distance &lt;= 8) {</span>
+<span class="fc" id="L20">            vector[0] = getCorner()[0] - getX();</span>
+<span class="fc" id="L21">            vector[1] = getCorner()[1] - getY();</span>
         }
 <span class="fc" id="L23">        return vector;</span>
     }

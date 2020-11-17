@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ghost.MovableTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2020-11-17T04:43:51" hostname="vlan-2644-10-16-180-245.student.wireless.sydney.edu.au" time="0.007">
+  <properties/>
+  <testcase name="getVelocityTest()" classname="ghost.MovableTest" time="0.001"/>
+  <testcase name="collideWallTestAboveAndBelow()" classname="ghost.MovableTest" time="0.001"/>
+  <testcase name="collideWallTestLeftAndRight()" classname="ghost.MovableTest" time="0.001"/>
+  <testcase name="wallAboveAndBelowTest()" classname="ghost.MovableTest" time="0.001"/>
+  <testcase name="wallOnLeftAndRightTest()" classname="ghost.MovableTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -18,7 +18,6 @@ class GameManagerTest {
         gameManager.setUp();
         assert(gameManager.debug == false);
         assert(gameManager.objects.size() != 0);
-        assert(gameManager.ghosts.size() != 0);
         assertNotNull(gameManager.player);
     }
 

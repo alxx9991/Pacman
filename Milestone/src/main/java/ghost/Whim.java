@@ -72,4 +72,11 @@ public class Whim extends Ghost {
         }
         return vector;
     }
+    public boolean hasChaser() {
+        if (this.chaser != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

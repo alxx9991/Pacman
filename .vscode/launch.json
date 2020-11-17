@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - GameManagerTest",
+            "request": "launch",
+            "mainClass": "ghost.GameManagerTest",
+            "projectName": "Milestone"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - AppTest",
+            "request": "launch",
+            "mainClass": "ghost.AppTest",
+            "projectName": "Milestone"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - GhostChaseTest",
             "request": "launch",
             "mainClass": "ghost.GhostChaseTest",

@@ -129,7 +129,7 @@ public class Waka extends Movable {
                         getGm().nextMove = null;
                     }
                 }
-            } else if (getGm().nextMove.equals(Direction.Right)) {
+            } else {
                 checkWallCollision();
                 ;
             }
@@ -155,7 +155,7 @@ public class Waka extends Movable {
                         getGm().nextMove = null;
                     }
                 }
-            } else if (getGm().nextMove.equals(Direction.Left)) {
+            } else {
                 checkWallCollision();
                 ;
             }
@@ -180,7 +180,7 @@ public class Waka extends Movable {
                         getGm().nextMove = null;
                     }
                 }
-            } else if (getGm().nextMove.equals(Direction.Up)) {
+            } else {
                 checkWallCollision();
                 ;
             }
@@ -205,7 +205,7 @@ public class Waka extends Movable {
                         getGm().nextMove = null;
                     }
                 }
-            } else if (getGm().nextMove.equals(Direction.Down)) {
+            } else {
                 checkWallCollision();
                 ;
             }
@@ -215,7 +215,7 @@ public class Waka extends Movable {
     //Use frame cycle to determine if the sprite should be open or closed, and set the sprite as open if it should be open
     public boolean determineSpriteOpen() {
         boolean open = false;
-        if (this.frameCycle >= 0 && this.frameCycle <= 7) {
+        if (this.frameCycle <= 7) {
             setSpriteOpen();
             open = true;
         } else if (this.frameCycle >= 16 && this.frameCycle <= 23) {
@@ -246,17 +246,21 @@ public class Waka extends Movable {
     }
 
     public void draw() {
-        if (this.determineSpriteOpen()) {
-            getGm().app.image(getSprite(), getX() - 4, getY() - 5);
-        } else {
-            getGm().app.image(closedSprite, getX() - 4, getY() - 5);
+        if (getSprite() != null) {
+            if (this.determineSpriteOpen()) {
+                getGm().app.image(getSprite(), getX() - 4, getY() - 5);
+            } else {
+                getGm().app.image(closedSprite, getX() - 4, getY() - 5);
+            }
         }
 
         // Display lives
         int lifeX = 8;
         int lifeY = 543;
         for (int i = 0; i < lives; i++) {
-            getGm().app.image(getGm().app.faceRightImage, lifeX, lifeY);
+            if (getGm().app.faceRightImage != null) {
+                getGm().app.image(getGm().app.faceRightImage, lifeX, lifeY);
+            }
             lifeX += 30;
         }
     }
@@ -334,6 +338,18 @@ public class Waka extends Movable {
 
     public void setAlive(boolean b) {
         this.alive = b;
+    }
+
+    public int getFrameCycle() {
+        return this.frameCycle;
+    }
+
+    public void setFrameCycle(int frameCycle) {
+        this.frameCycle = frameCycle;
+    }
+
+    public boolean isAlive() {
+        return this.alive;
     }
 
     public long getLives() {

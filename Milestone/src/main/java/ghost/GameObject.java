@@ -60,7 +60,7 @@ public abstract class GameObject {
     }
 
     public void setY(int y) {
-        if (y > 576 || x < 0) {
+        if (y > 576 || y < 0) {
             throw new OutOfMapException();
         } else {
             this.y = y;
@@ -68,14 +68,14 @@ public abstract class GameObject {
     }
 
     public void setGridX(int gridX) {
-        if (this.gridX > 28 || this.gridX < 0) {
+        if (gridX > 28 || gridX < 0) {
             throw new OutOfMapException();
         }
         this.gridX = gridX;
     }
 
     public void setGridY(int gridY) {
-        if (this.gridY > 36 || this.gridY < 0) {
+        if (gridY > 36 || gridY < 0) {
             throw new OutOfMapException();
         }
         this.gridY = gridY;
