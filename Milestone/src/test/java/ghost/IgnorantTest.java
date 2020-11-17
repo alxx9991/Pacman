@@ -3,9 +3,6 @@ package ghost;
 import org.junit.jupiter.api.Test;
 
 import ghost.Ghost.Mode;
-import ghost.Movable.Direction;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 
@@ -15,7 +12,7 @@ public class IgnorantTest {
     File file = new File("./src/test/java/ghost/testMap.txt");
 
     @Test
-    public void generateVectorsTest() {
+    public void generateVectorsTest() { //Test chaser vector generation
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         Ghost ignorant = null;

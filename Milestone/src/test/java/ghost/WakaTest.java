@@ -515,7 +515,7 @@ public class WakaTest {
         assert(gameManager.grid.size() > 0);
         assertNotNull(gameManager.player);
         
-        //Go left1 from going up
+        //Test attempt left from going up in corner
         gameManager.player.setGridX(1);
         gameManager.player.setGridY(4);
         gameManager.player.setX(16);
@@ -527,7 +527,7 @@ public class WakaTest {
         gameManager.player.move();
         assert(gameManager.player.getDirection() == Direction.Still);
 
-        //Go up4 from going left
+        //Test attempt up from going left in corner
         gameManager.player.setGridX(1);
         gameManager.player.setGridY(4);
         gameManager.player.setX(16);
@@ -548,6 +548,7 @@ public class WakaTest {
         assert(gameManager.grid.size() > 0);
         assertNotNull(gameManager.player);
         
+        //Test attempt going right from up in corner
         gameManager.player.setGridX(26);
         gameManager.player.setGridY(4);
         gameManager.player.setX(416);
@@ -558,7 +559,7 @@ public class WakaTest {
         gameManager.player.selectDirection();
         gameManager.player.move();
         assert(gameManager.player.getDirection() == Direction.Still);
-
+        // Test attempt going up from right in corner
         gameManager.player.setGridX(26);
         gameManager.player.setGridY(4);
         gameManager.player.setX(416);
@@ -572,7 +573,8 @@ public class WakaTest {
     }
 
     @Test
-    public void bottomRightCorner() {
+    public void bottomRightCornerCollisionTest() {
+        //Hit wall in bottom right corner test
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -603,7 +605,8 @@ public class WakaTest {
     }
 
     @Test
-    public void bottomLeftCorner() {
+    public void bottomLeftCornerCollisionTest() {
+        //Hit wall in bottom left corner collision test
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -634,16 +637,18 @@ public class WakaTest {
     }
 
     @Test
-    public void testResetIfDead() {
+    public void testResetIfDead() { // Test resetting waka when he dies
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
         gameManager.player.setAlive(false);
         gameManager.tick();
+        assert(gameManager.player.isAlive());
     }
 
     @Test
     public void testSetSpriteOpen() {
+        //Test setting sprite open and closed in various directions
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -651,13 +656,13 @@ public class WakaTest {
 
         gameManager.player.setDirection(Direction.Left);
         gameManager.player.setSpriteOpen();
-
+        assertNull(gameManager.player.getSprite());
         gameManager.player.setDirection(Direction.Right);
         gameManager.player.setSpriteOpen();
-
+        assertNull(gameManager.player.getSprite());
         gameManager.player.setDirection(Direction.Up);
         gameManager.player.setSpriteOpen();
-
+        assertNull(gameManager.player.getSprite());
         gameManager.player.setDirection(Direction.Down);
         gameManager.player.setSpriteOpen();
 
@@ -665,7 +670,7 @@ public class WakaTest {
     }
     
     @Test
-    public void testDetermineSpriteOpen() {
+    public void testDetermineSpriteOpen() { //Test determining sprite open/closed at various points in the open/close cycle
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();

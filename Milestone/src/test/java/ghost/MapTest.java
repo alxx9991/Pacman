@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MapTest {
     
     @Test
-    public void noSuchMapTest() {
+    public void noSuchMapTest() { // Test no such map
         App testApp = new App();
         GameManager gameManager = new GameManager(testApp);
         File file = new File("Sfaefadf");

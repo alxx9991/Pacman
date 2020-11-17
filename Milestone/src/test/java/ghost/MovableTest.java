@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import ghost.Movable.Direction;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 
@@ -14,7 +13,7 @@ public class MovableTest {
     File file = new File("./src/test/java/ghost/testMapTwo.txt");
 
     @Test
-    public void wallOnLeftAndRightTest() {
+    public void wallOnLeftAndRightTest() { //Test wall on left or right for various wall types
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -48,7 +47,7 @@ public class MovableTest {
     }
 
     @Test
-    public void wallAboveAndBelowTest() {
+    public void wallAboveAndBelowTest() { //Test wall above and below for various wall types
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -81,7 +80,7 @@ public class MovableTest {
         assert(gameManager.player.wallAbove());
     }
     @Test
-    public void collideWallTestLeftAndRight() {
+    public void collideWallTestLeftAndRight() { //Test colliding with various walls left and right
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -125,7 +124,7 @@ public class MovableTest {
     }
 
     @Test
-    public void collideWallTestAboveAndBelow() {
+    public void collideWallTestAboveAndBelow() { //Test colliding with various walls above and below
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -169,7 +168,7 @@ public class MovableTest {
     }
     
     @Test
-    public void getVelocityTest() {
+    public void getVelocityTest() { //Test velocity matches speed in particular direction
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();

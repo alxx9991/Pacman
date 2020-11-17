@@ -15,7 +15,7 @@ public class GhostTest {
     File file = new File("./src/test/java/ghost/testMap.txt");
 
     @Test
-    public void selectDirectionTest() {
+    public void selectDirectionTest() { //Test selecting direction
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         Ghost chaser = null;
@@ -29,13 +29,15 @@ public class GhostTest {
                 chaser = ghost;
             }
         }
+
+        //Select direction when still
         assertNotNull(chaser);
         assert(chaser.getCorner()[0] == 0 && chaser.getCorner()[1] == 0);
         chaser.setDirection(Direction.Still);
         chaser.setMode(Mode.Chase);
         chaser.selectDirection();
         assert (chaser.getDirection() == Direction.Left);
-
+        //Select direction in scatter mode
         chaser.setDirection(Direction.Down);
         chaser.setMode(Mode.Scatter);
         chaser.selectDirection();
@@ -53,23 +55,27 @@ public class GhostTest {
                 chaser = ghost;
             }
         }
+        //Test selecting mode when frightened
         chaser.setMode(Mode.Frightened);
         chaser.selectMode();
         assert (chaser.getMode() == Mode.Frightened);
-
+        
+        //Test ending scatter mode when timer expires
         chaser.setMode(Mode.Scatter);
         chaser.setCycleLength(100);
         chaser.setFrameCount(100);
         chaser.selectMode();
         assert (chaser.getFrameCount() == 0);
         assert (chaser.getMode() == Mode.Chase);
-
+        
+        //Test ending chase mode when timer expires
         chaser.setCycleLength(100);
         chaser.setFrameCount(100);
         chaser.selectMode();
         assert (chaser.getFrameCount() == 0);
         assert (chaser.getMode() == Mode.Scatter);
-
+        
+        //Test reset to start of mode lengths array
         chaser.setCycleLength(100);
         chaser.setFrameCount(100);
         chaser.setCycleIndex(gameManager.modeLengths.size());
@@ -80,7 +86,7 @@ public class GhostTest {
     }
 
     @Test
-    public void canChangeDirectionTest() {
+    public void canChangeDirectionTest() { 
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         Ghost chaser = null;
@@ -90,6 +96,8 @@ public class GhostTest {
                 chaser = ghost;
             }
         }
+
+        //Test can change directions from top left
         chaser.setGridX(1);
         chaser.setGridY(4);
         chaser.setX(16);
@@ -105,7 +113,8 @@ public class GhostTest {
 
         chaser.setDirection(Direction.Left);
         assert (chaser.canChangeDirection());
-
+        
+        //Test can change directions from bottom right
         chaser.setGridX(26);
         chaser.setGridY(32);
         chaser.setX(416);
@@ -121,7 +130,8 @@ public class GhostTest {
 
         chaser.setDirection(Direction.Left);
         assert (chaser.canChangeDirection());
-
+        
+        //Test can change directions when not at intersection top left
         chaser.setGridX(1);
         chaser.setGridY(5);
         chaser.setX(16);
@@ -131,7 +141,8 @@ public class GhostTest {
 
         chaser.setDirection(Direction.Down);
         assertFalse(chaser.canChangeDirection());
-
+        
+        //Test can change directions when not at intersection bottom right
         chaser.setGridX(25);
         chaser.setGridY(32);
         chaser.setX(400);
@@ -145,7 +156,7 @@ public class GhostTest {
     }
 
     @Test
-    public void canGoDirectionTest() {
+    public void canGoDirectionTest() { //Test allowed to go in certain direction
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         Ghost chaser = null;
@@ -176,6 +187,7 @@ public class GhostTest {
                 chaser = ghost;
             }
         }
+        //Test generating preferences with different attack vectors
         int[] vector = { 2, 1 };
         assert (chaser.generatePreferences(Direction.Right, vector).get(0) == Direction.Right);
         int[] vector2 = { -2, -1 };
@@ -197,10 +209,13 @@ public class GhostTest {
                 chaser = ghost;
             }
         }
+        //Test setting frightened mode and saving frightened mode
         chaser.setMode(Mode.Frightened);
         chaser.setSavedMode(Mode.Chase);
         chaser.checkIfFrightened();
         assert(chaser.getFrightenedCount() == 1);
+
+        //Test resetting frightened mode
         chaser.setFrightenedCount(2);
         chaser.setFrightenedLength(3);
         assert(chaser.getSavedMode() == Mode.Chase);
@@ -211,7 +226,7 @@ public class GhostTest {
     }
 
     @Test
-    public void drawLineTest() {
+    public void drawLineTest() { //Test draw target line - should not throw exception when Papplet.g is null
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -230,7 +245,7 @@ public class GhostTest {
     }
 
     @Test
-    public void deadDrawTest() {
+    public void deadDrawTest() { //Test draw line when dead. Should not draw line.
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();

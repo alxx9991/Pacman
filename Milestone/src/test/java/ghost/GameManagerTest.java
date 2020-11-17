@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameManagerTest {
     @Test 
-    public void constructorTest() {
+    public void constructorTest() { // Test constructor
         App testApp = new App();
         GameManager gameManager = new GameManager(testApp);
         assertNotNull(gameManager);
     }
     
     @Test
-    public void setUpTest() {
+    public void setUpTest() { //Test setup method
         App testApp = new App();
         GameManager gameManager = new GameManager(testApp);
         gameManager.setUp();
@@ -22,7 +22,7 @@ class GameManagerTest {
     }
 
     @Test
-    public void tickTest() {
+    public void tickTest() { //Test tick method
         App testApp = new App();
         GameManager gameManager = new GameManager(testApp);
         gameManager.setUp();

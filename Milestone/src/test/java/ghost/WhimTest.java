@@ -13,7 +13,7 @@ public class WhimTest {
     File file = new File("./src/test/java/ghost/testMap.txt");
 
     @Test
-    public void generateVectorsTest() {
+    public void generateVectorsTest() { //Generate vectors test
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         Ghost whim = null;
@@ -33,6 +33,7 @@ public class WhimTest {
                 chaser = ghost;
             }
         }
+        //Test generate vectors when player is facing particular directions
         gameManager.player.setDirection(Direction.Right);
         assert(whim.generateVectors(1, 1)[0] == -622);
         assert(whim.generateVectors(1000, 1000)[0] == 176);
@@ -52,9 +53,11 @@ public class WhimTest {
         gameManager.player.setDirection(Direction.Still);
         assert(whim.generateVectors(1, 1)[0] == -686);
         assert(whim.generateVectors(1000, 1000)[0] == 1312);
-
+        
+        //Test vector generation with no chaser to pair with
         assert(whim2.generateVectors(1, 1)[0] == -175);
-
+        
+        //Test vector generation with dead chaser
         chaser.setAlive(false);
         assert(whim.generateVectors(1, 1)[0] == -271);
 

@@ -1,7 +1,6 @@
 package ghost;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 public class GameObjectTest {
@@ -10,7 +9,7 @@ public class GameObjectTest {
     File file = new File("./src/test/java/ghost/testMap.txt");
     
     @Test
-    public void outOfBoundsErrorsTest() {
+    public void outOfBoundsErrorsTest() { //Test setting coordinates outside of the window
         gameManager.setUp();
         boolean exceptionCaught = false;
         exceptionCaught = false;

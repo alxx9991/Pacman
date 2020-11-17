@@ -2,7 +2,6 @@ package ghost;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 public class SuperFruitTest {
     App testApp = new App();
@@ -10,7 +9,7 @@ public class SuperFruitTest {
     File file = new File("./src/test/java/ghost/testMap.txt");
 
     @Test
-    public void drawTest() {
+    public void drawTest() { 
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -20,6 +19,7 @@ public class SuperFruitTest {
                 superfruit = (SuperFruit)fruit;
             }
         }
+        //Test superfruit state when activated/deactivated, test effect on ghosts
         superfruit.setAlive(false);
         superfruit.draw();
         assert(superfruit.isActivated());
