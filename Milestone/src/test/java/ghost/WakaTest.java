@@ -687,7 +687,7 @@ public class WakaTest {
     }
     
     @Test
-    public void testCollisions() {
+    public void testCollisions() { //Test collisions with ghosts
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
@@ -725,7 +725,8 @@ public class WakaTest {
         for(Ghost ghost: gameManager.ghosts) {
             ghost.setMode(Mode.Frightened);
         }
-
+        
+        //Test frightened collisions
         gameManager.player.setX(170);
         gameManager.player.setY(223);
         gameManager.player.setCollisionBorders();
@@ -741,6 +742,7 @@ public class WakaTest {
     
     @Test
     public void drawTest() {
+        //Test draw function - should not throw exception
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();
