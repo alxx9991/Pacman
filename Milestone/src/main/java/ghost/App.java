@@ -13,7 +13,7 @@ public class App extends PApplet {
     public static final int WIDTH = 448;
     public static final int HEIGHT = 576;
 
-    //Game manager
+    // Game manager
     /**
      * Game engine: handles the game logic.
      */
@@ -50,9 +50,10 @@ public class App extends PApplet {
     public App() {
         this.gameManager = new GameManager(this);
     }
-    
+
     /**
-     * Load all the images and fonts in the game, and calls the <code>gameManager.setUp()</code> function.
+     * Load all the images and fonts in the game, and calls the
+     * <code>gameManager.setUp()</code> function.
      */
     public void setup() {
         frameRate(60);
@@ -84,26 +85,29 @@ public class App extends PApplet {
         this.whimImage = this.loadImage("whim.png");
         this.ignorantImage = this.loadImage("ignorant.png");
         this.frightenedImage = this.loadImage("frightened.png");
-        
-        //Set up game with game manager
+
+        // Set up game with game manager
         gameManager.setUp();
-        
+
     }
 
     public void settings() {
         size(WIDTH, HEIGHT);
     }
-    
+
     /**
-     * Called on every frame of the game. Calls the <code>gameManager.tick()</code> function which runs all the logic for one frame and draws all the objects in one frame.
+     * Called on every frame of the game. Calls the <code>gameManager.tick()</code>
+     * function which runs all the logic for one frame and draws all the objects in
+     * one frame.
      */
     public void draw() {
         background(0, 0, 0);
         gameManager.tick();
     }
-    
-    /** 
-     * Register key presses by the player and sends it to the <code>GameManager</code> object.
+
+    /**
+     * Register key presses by the player and sends it to the
+     * <code>GameManager</code> object.
      */
     public void keyPressed() {
         if (key == CODED) {
@@ -122,7 +126,7 @@ public class App extends PApplet {
             }
         }
     }
-    
+
     public static void main(String[] args) {
         PApplet.main("ghost.App");
     }

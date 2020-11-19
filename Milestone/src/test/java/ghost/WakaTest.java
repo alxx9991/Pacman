@@ -15,7 +15,7 @@ public class WakaTest {
     File file = new File("./src/test/java/ghost/testMap.txt");
     
     @Test
-    public void wakaIntersectionMoveTest() {
+    public void wakaIntersectionMoveTestStandstill() {
         gameManager.readConfig();
         Map map = new Map(file, gameManager);
         map.generateObjects();

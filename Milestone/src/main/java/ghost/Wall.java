@@ -1,12 +1,15 @@
 package ghost;
+
 /**
- * A wall object which prevents Waka and ghosts from passing through. There are different types of walls which have different sprites, such as vertical walls, top left corner walls and so on.
+ * A wall object which prevents Waka and ghosts from passing through. There are
+ * different types of walls which have different sprites, such as vertical
+ * walls, top left corner walls and so on.
  */
 public class Wall extends GameObject {
 
     public Wall(int x, int y, char type, GameManager gm, int gridX, int gridY) {
         super(x, y, null, gm, gridX, gridY);
-        //Choose sprite based on type of wall
+        // Choose sprite based on type of wall
         switch (type) {
             case '1':
                 setSprite(gm.app.horizontalImage);
@@ -34,7 +37,7 @@ public class Wall extends GameObject {
 
     public void draw() {
         getGm().app.image(getSprite(), getX(), getY());
-    }   
+    }
 
     public void tick() {
         ;

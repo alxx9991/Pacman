@@ -35,7 +35,7 @@ public class WhimTest {
         }
         //Test generate vectors when player is facing particular directions
         gameManager.player.setDirection(Direction.Right);
-        assert(whim.generateVectors(1, 1)[0] == -622);
+        assert(whim.generateVectors(1, 1)[0] == -62);
         assert(whim.generateVectors(1000, 1000)[0] == 176);
 
         gameManager.player.setDirection(Direction.Left);

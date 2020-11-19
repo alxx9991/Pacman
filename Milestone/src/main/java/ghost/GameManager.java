@@ -10,6 +10,7 @@ import ghost.Movable.Direction;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
+
 /**
  * The game engine which processes all the logic of the game.
  */
@@ -50,7 +51,8 @@ public class GameManager {
      */
     protected String mapFileName;
     /**
-     * The array of mode lengths specifying the duration of alternating between scatter and chase mode.
+     * The array of mode lengths specifying the duration of alternating between
+     * scatter and chase mode.
      */
     protected ArrayList<Long> modeLengths;
     /**
@@ -95,6 +97,7 @@ public class GameManager {
         gameEnded = false;
         gameEndedCount = 0;
     }
+
     /**
      * Reads configuration file, reads map file and generates all the game objects.
      */
@@ -109,11 +112,15 @@ public class GameManager {
             }
         }
     }
+
     /**
-     * Runs all the logic in the game. When the game is in progress, it calls the <code>tick()</code> functions of all the game objects and draws all the game objects. If game is won or lost, it displays the win/lose screen and counts 10 seconds before restarting the game.
+     * Runs all the logic in the game. When the game is in progress, it calls the
+     * <code>tick()</code> functions of all the game objects and draws all the game
+     * objects. If game is won or lost, it displays the win/lose screen and counts
+     * 10 seconds before restarting the game.
      */
     public void tick() {
-        //Game manager
+        // Game manager
         if (gameEnded == false) { // Game running
             player.tick();
             for (Ghost ghost : ghosts) {
@@ -142,14 +149,16 @@ public class GameManager {
                     app.fill(255);
                     app.text("YOU WIN", 152, 240);
                 }
-            } 
+            }
             if (gameEndedCount == 600) {
                 restartGame();
             }
         }
     }
+
     /**
-     * Uses <code>JSONParser</code> to parse through the JSON config file, and sets all the variables that the config file changes.
+     * Uses <code>JSONParser</code> to parse through the JSON config file, and sets
+     * all the variables that the config file changes.
      */
     public void readConfig() {
         JSONParser parser = new JSONParser();
@@ -170,8 +179,11 @@ public class GameManager {
             e.printStackTrace();
         }
     }
+
     /**
-     * Called when the 10 second timer between games expires. Calls restart function of player, ghosts and fruit. Resets the game ended timer and sets <code>gameEnded</code> variable to false. 
+     * Called when the 10 second timer between games expires. Calls restart function
+     * of player, ghosts and fruit. Resets the game ended timer and sets
+     * <code>gameEnded</code> variable to false.
      */
     public void restartGame() {
         // Restart player
@@ -188,5 +200,5 @@ public class GameManager {
         gameEndedCount = 0;
         gameEnded = false;
     }
-    
+
 }

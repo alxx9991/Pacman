@@ -1,8 +1,12 @@
 package ghost;
 
 import processing.core.PImage;
+
 /**
- * An abstract class that all movable objects extend from. Contains properties about their collision borders, direction of travel and speed. Has methods that are used to determine collisions with walls, as all movable objects are bounded by walls.
+ * An abstract class that all movable objects extend from. Contains properties
+ * about their collision borders, direction of travel and speed. Has methods
+ * that are used to determine collisions with walls, as all movable objects are
+ * bounded by walls.
  */
 public abstract class Movable extends GameObject {
     // Movement characteristics
@@ -75,7 +79,8 @@ public abstract class Movable extends GameObject {
     /**
      * Check for a wall on players right
      * 
-     * @return True if there is a wall on the movable object's right, false if there is not.
+     * @return True if there is a wall on the movable object's right, false if there
+     *         is not.
      */
     public boolean wallOnRight() {
         if (getGm().grid.get(getGridY())[getGridX() + 1] == '1' || getGm().grid.get(getGridY())[getGridX() + 1] == '2'
@@ -92,7 +97,8 @@ public abstract class Movable extends GameObject {
     /**
      * Check for a wall on players left
      * 
-     * @return True if there is a wall on the movable object's left, false if there is not.
+     * @return True if there is a wall on the movable object's left, false if there
+     *         is not.
      */
     public boolean wallOnLeft() {
         if (getGridX() == 0) {
@@ -290,6 +296,7 @@ public abstract class Movable extends GameObject {
     public int getBorderRight() {
         return this.borderRight;
     }
+
     /**
      * Returns the movable object's starting x coordinate
      * 
@@ -298,6 +305,7 @@ public abstract class Movable extends GameObject {
     public int getStartX() {
         return this.startX;
     }
+
     /**
      * Returns the movable object's starting y coordinate
      * 
@@ -309,48 +317,61 @@ public abstract class Movable extends GameObject {
 
     /**
      * Sets the movable object's current direction.
+     * 
      * @param direction Direction of travel.
      */
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
     /**
      * Sets the movable object's current horizontal velocity.
+     * 
      * @param xVel Horizontal velocity.
      */
     public void setXVel(long xVel) {
         this.xVel = xVel;
     }
+
     /**
      * Sets the movable object's current vertical velocity.
+     * 
      * @param yVel Vertical velocity.
      */
     public void setYVel(long yVel) {
         this.yVel = yVel;
     }
+
     /**
      * Sets the movable object's top border.
+     * 
      * @param borderTop Movable object's top border.
      */
     public void setBorderTop(int borderTop) {
         this.borderTop = borderTop;
     }
+
     /**
      * Sets the movable object's bot border.
+     * 
      * @param borderBot Movable object's bot border.
      */
     public void setBorderBot(int borderBot) {
         this.borderBot = borderBot;
     }
+
     /**
      * Sets the movable object's left border.
+     * 
      * @param borderLeft Movable object's left border.
      */
     public void setBorderLeft(int borderLeft) {
         this.borderLeft = borderLeft;
     }
+
     /**
      * Sets the movable object's right border.
+     * 
      * @param borderRight Movable object's right border.
      */
     public void setBorderRight(int borderRight) {

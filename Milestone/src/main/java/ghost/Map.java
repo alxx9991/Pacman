@@ -5,8 +5,10 @@ import java.util.Scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+
 /**
- * A class which contains a collection of methods used to convert the map file into all the objects in the game.
+ * A class which contains a collection of methods used to convert the map file
+ * into all the objects in the game.
  */
 public class Map {
     private final GameManager gm;
@@ -15,8 +17,8 @@ public class Map {
         this.gm = gm;
         this.gm.grid = readMapFile(file);
     }
-    
-    /** 
+
+    /**
      * Convert map file into a grid of characters
      */
 
@@ -39,10 +41,10 @@ public class Map {
             return new ArrayList<char[]>();
         }
     }
-    
+
     /**
      * Iterates through grid of characters and generate all the objects in the game
-    */
+     */
     public void generateObjects() {
         int y = 0;
         if (gm.grid.size() == 0) {
@@ -95,6 +97,5 @@ public class Map {
             y += 16;
         }
     }
-        
 
 }

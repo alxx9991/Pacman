@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * An abstract class for which the types of ghost extend from. Ghosts chase Waka around the map in chase mode, and in scatter mode, they target their home corner (depending on the type of ghost). Waka loses a life if hit by a ghost. If Waka has collected a superfruit, they will become frightened, and ghosts die if hit by Waka during this time. They move at random at intersections when frightened.
+ * An abstract class for which the types of ghost extend from. Ghosts chase Waka
+ * around the map in chase mode, and in scatter mode, they target their home
+ * corner (depending on the type of ghost). Waka loses a life if hit by a ghost.
+ * If Waka has collected a superfruit, they will become frightened, and ghosts
+ * die if hit by Waka during this time. They move at random at intersections
+ * when frightened.
  */
 public abstract class Ghost extends Movable {
     // Scatter/Chase mode timer
@@ -497,7 +502,7 @@ public abstract class Ghost extends Movable {
         return this.cycleIndex;
     }
 
-    //Frightened mode getters and setters
+    // Frightened mode getters and setters
     /**
      * Sets the length in frames the ghost is frightened for.
      * 
@@ -524,7 +529,6 @@ public abstract class Ghost extends Movable {
     public void setFrightenedCount(long frightenedCount) {
         this.frightenedCount = frightenedCount;
     }
-
 
     /**
      * Gets the saved mode of the ghost before frightened mode.
