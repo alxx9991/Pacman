@@ -1,7 +1,9 @@
 package ghost;
 
 import processing.core.PImage;
-
+/**
+ * A type of ghost which pairs itself with a chaser. Once paired with a Chaser, the attack target of Whim in chase mode is determined by the chase vector of Chaser, shifted by 2 units in the direction of Waka's travel, and then extended by twice the length. Its home corner is the bottom right corner. If it does not have a Chaser to pair with, it will directly chase Waka.
+ */
 public class Whim extends Ghost {
     private Chaser chaser;
 

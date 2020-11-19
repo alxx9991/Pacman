@@ -2,7 +2,9 @@ package ghost;
 
 import ghost.Ghost.Mode;
 import processing.core.PImage;
-
+/**
+ * The main player of the game. Attempts to eat all the fruit without colliding with ghosts. Moves at the same speed as ghosts. Has a number of lives set by the config file. If all the lives are lost, the game is over.
+ */
 public class Waka extends Movable {
     private int frameCycle;
     private final PImage closedSprite;

@@ -1,5 +1,7 @@
 package ghost;
-
+/**
+ * A wall object which prevents Waka and ghosts from passing through. There are different types of walls which have different sprites, such as vertical walls, top left corner walls and so on.
+ */
 public class Wall extends GameObject {
 
     public Wall(int x, int y, char type, GameManager gm, int gridX, int gridY) {

@@ -10,28 +10,78 @@ import ghost.Movable.Direction;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-
+/**
+ * The game engine which processes all the logic of the game.
+ */
 public class GameManager {
+    /**
+     * The <code>App</code> object running the game.
+     */
     protected final App app;
     // Game state
+    /**
+     * Boolean that toggles debug mode
+     */
     protected boolean debug;
+    /**
+     * Boolean that is true if the game is ended, false if the game is underway.
+     */
     protected boolean gameEnded;
+    /**
+     * The counter for the 10 second timer between games.
+     */
     protected int gameEndedCount;
+    /**
+     * The next move inputted by the player.
+     */
     protected Direction nextMove;
 
     // Config options
+    /**
+     * The speed of the game. 1 or 2 depending on the config file.
+     */
     protected long speed;
+    /**
+     * The number of lives waka has, specified by the config file.
+     */
     protected long lives;
+    /**
+     * The name of the text file containing the map
+     */
     protected String mapFileName;
+    /**
+     * The array of mode lengths specifying the duration of alternating between scatter and chase mode.
+     */
     protected ArrayList<Long> modeLengths;
+    /**
+     * The length that ghosts are frightened for when the superfruit is collected.
+     */
     protected long frightenedLength;
 
     // Map Elements
+    /**
+     * An array list of all the objects in the game.
+     */
     protected final ArrayList<GameObject> objects;
+    /**
+     * A list of all the walls in the game.
+     */
     protected final ArrayList<Wall> wallList;
+    /**
+     * A list of all the ghosts in the game.
+     */
     protected final ArrayList<Ghost> ghosts;
+    /**
+     * A list of all the fruit in the game.
+     */
     protected final ArrayList<Fruit> fruits;
+    /**
+     * The player object of the game
+     */
     protected Waka player;
+    /**
+     * A grid of characters that represent the map/
+     */
     protected ArrayList<char[]> grid;
 
     public GameManager(App app) {

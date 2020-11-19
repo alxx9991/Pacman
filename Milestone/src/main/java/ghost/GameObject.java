@@ -1,6 +1,9 @@
 package ghost;
 import processing.core.PImage;
 
+/**
+ * An abstract class which is the superclass that all objects in the game extend from. All game objects have a pixel coordinate, a grid coordinate, a sprite and a game manager. They also must have a draw function to be drawn on the screen, and a tick function to process logic.
+ */
 public abstract class GameObject {
     private int x;
     private int y;
@@ -10,7 +13,7 @@ public abstract class GameObject {
 
     private PImage sprite;
     private final GameManager gm;
-
+    
     public GameObject(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         this.x = x;
         this.y = y;

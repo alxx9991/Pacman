@@ -2,7 +2,9 @@ package ghost;
 
 import ghost.Ghost.Mode;
 import processing.core.PImage;
-
+/**
+ * A type of fruit that has a special property - when collected by Waka, all ghosts become frightened for a period of time set by the config file. When frightened, ghosts move at random at intersections, and are killed if they collide with Waka. They are twice the size of normal fruit, and also must be collected to win the game.
+ */
 public class SuperFruit extends Fruit {
     private boolean activated;
 

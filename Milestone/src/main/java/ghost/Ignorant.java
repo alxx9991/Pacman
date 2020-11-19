@@ -1,7 +1,9 @@
 package ghost;
 
 import processing.core.PImage;
-
+/**
+ * A type of ghost which in chase mode, only targets Waka if he is more than 8 units away (straight line distance). Otherwise, he will target his home corner, the bottom left corner.
+ */
 public class Ignorant extends Ghost {
     public Ignorant(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         super(x, y, sprite, gm, gridX, gridY, 0, 576);

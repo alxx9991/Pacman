@@ -5,7 +5,9 @@ import java.util.Scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
+/**
+ * A class which contains a collection of methods used to convert the map file into all the objects in the game.
+ */
 public class Map {
     private final GameManager gm;
 
@@ -17,7 +19,7 @@ public class Map {
     /** 
      * Convert map file into a grid of characters
      */
-    
+
     public static ArrayList<char[]> readMapFile(File file) {
         try {
             ArrayList<char[]> grid = new ArrayList<char[]>();

@@ -5,6 +5,9 @@ import processing.core.PImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * An abstract class for which the types of ghost extend from. Ghosts chase Waka around the map in chase mode, and in scatter mode, they target their home corner (depending on the type of ghost). Waka loses a life if hit by a ghost. If Waka has collected a superfruit, they will become frightened, and ghosts die if hit by Waka during this time. They move at random at intersections when frightened.
+ */
 public abstract class Ghost extends Movable {
     // Scatter/Chase mode timer
     private Mode mode;

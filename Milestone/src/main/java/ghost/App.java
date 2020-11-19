@@ -6,6 +6,9 @@ import processing.core.PImage;
 
 import ghost.Movable.Direction;
 
+/**
+ * Subclass of PApplet used to run the game with processing.
+ */
 public class App extends PApplet {
     public static final int WIDTH = 448;
     public static final int HEIGHT = 576;

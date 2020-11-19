@@ -2,6 +2,9 @@ package ghost;
 
 import processing.core.PImage;
 
+/**
+ * A type of ghost which directly targets and chases Waka. Its corner is the top left corner.
+ */
 public class Chaser extends Ghost {
     private boolean hasWhim;
 

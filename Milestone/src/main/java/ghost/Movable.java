@@ -1,7 +1,9 @@
 package ghost;
 
 import processing.core.PImage;
-
+/**
+ * An abstract class that all movable objects extend from. Contains properties about their collision borders, direction of travel and speed. Has methods that are used to determine collisions with walls, as all movable objects are bounded by walls.
+ */
 public abstract class Movable extends GameObject {
     // Movement characteristics
     private Direction direction;

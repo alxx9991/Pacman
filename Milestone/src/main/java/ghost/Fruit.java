@@ -2,6 +2,9 @@ package ghost;
 
 import processing.core.PImage;
 
+/**
+ * A fruit is an object which must be collected by Waka. When all the fruit on the map is collected, the player wins the game.
+ */
 public class Fruit extends GameObject {
     private boolean alive;
 
