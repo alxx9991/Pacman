@@ -45,7 +45,9 @@ public class GameManager {
         gameEnded = false;
         gameEndedCount = 0;
     }
-
+    /**
+     * Reads configuration file, reads map file and generates all the game objects.
+     */
     public void setUp() {
         this.readConfig();
         File file = new File(this.mapFileName);
@@ -57,7 +59,9 @@ public class GameManager {
             }
         }
     }
-
+    /**
+     * Runs all the logic in the game. When the game is in progress, it calls the <code>tick()</code> functions of all the game objects and draws all the game objects. If game is won or lost, it displays the win/lose screen and counts 10 seconds before restarting the game.
+     */
     public void tick() {
         //Game manager
         if (gameEnded == false) { // Game running
@@ -78,13 +82,13 @@ public class GameManager {
             }
         } else { // In between games
             gameEndedCount++;
-            if (app.font != null) {
+            if (app.endScreenFont != null) {
                 if (player.getLives() == 0) {
-                    app.textFont(app.font, 20);
+                    app.textFont(app.endScreenFont, 20);
                     app.fill(255);
                     app.text("GAME OVER", 132, 240);
                 } else if (Fruit.fruitLeft(this) == false) {
-                    app.textFont(app.font, 20);
+                    app.textFont(app.endScreenFont, 20);
                     app.fill(255);
                     app.text("YOU WIN", 152, 240);
                 }
@@ -94,7 +98,9 @@ public class GameManager {
             }
         }
     }
-
+    /**
+     * Uses <code>JSONParser</code> to parse through the JSON config file, and sets all the variables that the config file changes.
+     */
     public void readConfig() {
         JSONParser parser = new JSONParser();
         try {
@@ -114,7 +120,9 @@ public class GameManager {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Called when the 10 second timer between games expires. Calls restart function of player, ghosts and fruit. Resets the game ended timer and sets <code>gameEnded</code> variable to false. 
+     */
     public void restartGame() {
         // Restart player
         player.playerRestart();

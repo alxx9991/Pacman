@@ -10,7 +10,7 @@ public class SuperFruit extends Fruit {
         super(x, y, sprite, gm, gridX, gridY);
         this.activated = false;
     }
-
+    
     public void draw() {
         if (isAlive()) {
             getGm().app.image(getSprite(), getX() - 7, getY() - 7, 30, 30);

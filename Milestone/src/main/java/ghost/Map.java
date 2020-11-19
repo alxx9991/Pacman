@@ -14,7 +14,10 @@ public class Map {
         this.gm.grid = readMapFile(file);
     }
     
-    //Convert map file into a grid of characters
+    /** 
+     * Convert map file into a grid of characters
+     */
+    
     public static ArrayList<char[]> readMapFile(File file) {
         try {
             ArrayList<char[]> grid = new ArrayList<char[]>();
@@ -35,7 +38,9 @@ public class Map {
         }
     }
     
-    //Iterate through grid of characters and generate all the objects in the game
+    /**
+     * Iterates through grid of characters and generate all the objects in the game
+    */
     public void generateObjects() {
         int y = 0;
         if (gm.grid.size() == 0) {

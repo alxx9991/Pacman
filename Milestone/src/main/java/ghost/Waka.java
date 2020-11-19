@@ -21,7 +21,12 @@ public class Waka extends Movable {
         setBorderLeft(getX() + 2);
         setBorderRight(getX() + 21);
     }
-
+    /**
+     * Logic performed in each frame: Selects a direction based on the player input and waka position and direction.
+     * Moves in said direction.
+     * Update collision borders, then check if there is a ghost collision.
+     * If the player has been killed by a ghost, call the <code>resetIfDead()</code> method which resets the player and ghosts back to starting position.
+     */
     public void tick() {
         selectDirection();
         move();
@@ -30,7 +35,9 @@ public class Waka extends Movable {
         resetIfDead();
     }
     
-    //Reset waka and ghost locations if dead, and remove a life
+    /**
+     * Reset waka and ghost locations if dead, and remove a life
+    */
     public void resetIfDead() {
         if (this.alive == false) {
             this.lives -= 1;
@@ -61,7 +68,9 @@ public class Waka extends Movable {
         }
     }
     
-    //Set collision boundaries
+    /**
+     * Set collision boundaries
+    */
     public void setCollisionBorders() {
         setBorderTop(getY() + 2);
         setBorderBot(getY() + 22);
@@ -69,7 +78,9 @@ public class Waka extends Movable {
         setBorderRight(getX() + 21);
     }
     
-    //Choose direction 
+    /**
+     * Choose direction based on the player's input, and the 
+    */
     public void selectDirection() {
         //If player is still, select direction based on choice
         if (getDirection().equals(Direction.Still)) {
@@ -212,7 +223,10 @@ public class Waka extends Movable {
         }
     }
     
-    //Use frame cycle to determine if the sprite should be open or closed, and set the sprite as open if it should be open
+    /**
+     * Use frame cycle to determine if the sprite should be open or closed, and set the sprite as open if it should be open
+     * @return True if sprite should be open, closed if sprite should be closed
+    */
     public boolean determineSpriteOpen() {
         boolean open = false;
         if (this.frameCycle <= 7) {
@@ -232,7 +246,9 @@ public class Waka extends Movable {
         return open;
     }
     
-    //Choose open sprite based on direction of travel
+    /**
+     * Changes the open sprite to face different directions depending on waka's direction of travel
+    */
     public void setSpriteOpen() {
         if (getDirection().equals(Direction.Left)) {
             setSprite(getGm().app.faceLeftImage);
@@ -244,7 +260,10 @@ public class Waka extends Movable {
             setSprite(getGm().app.faceUpImage);
         }
     }
-
+    
+    /**
+     * Draw either the closed or open sprite depending on whether <code>this.determineSpriteOpen</code> returns true or not. Also draws the lives waka has depending on his lives remaining.
+     */
     public void draw() {
         if (getSprite() != null) {
             if (this.determineSpriteOpen()) {
@@ -264,7 +283,10 @@ public class Waka extends Movable {
             lifeX += 30;
         }
     }
-
+    
+    /**
+     * Check if the player is colliding into a wall. Used when the player has not provided valid input at a junction.
+     */
     public void checkWallCollision() {
         if (getDirection().equals(Direction.Right)) {
             if (collideWallOnRight()) {
@@ -297,7 +319,9 @@ public class Waka extends Movable {
         }
     }
     
-    //Check for collision with ghost based on player and ghost collision boundaries, and set player/ghost alive boolean based on mode
+    /**
+     * Check for collision with ghost based on player and ghost collision boundaries, and set player/ghost alive boolean based on mode
+    */
     public void checkGhostCollision() {
         for (Ghost ghost : getGm().ghosts) {
             if (ghost.isAlive()) {
@@ -322,7 +346,9 @@ public class Waka extends Movable {
         }
     }
 
-    //Restart player when game restarts
+    /**
+     * Restart player when game restarts
+    */
     public void playerRestart() {
         setX(getStartX());
         setY(getStartY());
@@ -335,28 +361,47 @@ public class Waka extends Movable {
         setAlive(true);
         setLives(getGm().lives);
     }
-
+    
+    /**
+     * Sets the alive status of waka
+     * @param b Alive boolean.
+     */
     public void setAlive(boolean b) {
         this.alive = b;
     }
-
-    public int getFrameCycle() {
-        return this.frameCycle;
-    }
-
-    public void setFrameCycle(int frameCycle) {
-        this.frameCycle = frameCycle;
-    }
-
+    /**
+     * Returns the alive status of waka
+     * @return True if waka is alive, false if waka is dead.
+     */
     public boolean isAlive() {
         return this.alive;
     }
-
+    /**
+     * Returns the number of lives waka has
+     * @return The number of lives waka has
+     */
     public long getLives() {
         return this.lives;
     }
-
+    /**
+     * Sets number of lives waka has
+     * @param lives The number of lives waka has.
+     */
     public void setLives(long lives) {
         this.lives = lives;
+    }
+    /**
+     * Gets the frame cycle waka is on, used for calculating the sprite open/closed position.
+     * @return The frame cycle waka is on.
+     */
+    public int getFrameCycle() {
+        return this.frameCycle;
+    }
+    /**
+     * Sets the frame cycle waka is on, used for calculating the sprite open/closed position.
+     * @param frameCycle The frame cycle waka is on.
+     */
+    public void setFrameCycle(int frameCycle) {
+        this.frameCycle = frameCycle;
     }
 }

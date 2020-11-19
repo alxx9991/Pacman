@@ -11,6 +11,9 @@ public class App extends PApplet {
     public static final int HEIGHT = 576;
 
     //Game manager
+    /**
+     * Game engine: handles the game logic.
+     */
     protected GameManager gameManager;
 
     // Wall Images
@@ -39,17 +42,20 @@ public class App extends PApplet {
     protected PImage frightenedImage;
 
     // Font
-    protected PFont font;
+    protected PFont endScreenFont;
 
     public App() {
         this.gameManager = new GameManager(this);
     }
-
+    
+    /**
+     * Load all the images and fonts in the game, and calls the <code>gameManager.setUp()</code> function.
+     */
     public void setup() {
         frameRate(60);
 
         // Load font
-        this.font = createFont("PressStart2P-Regular.ttf", 10);
+        this.endScreenFont = createFont("PressStart2P-Regular.ttf", 10);
 
         // Load walls
         this.downLeftImage = this.loadImage("downLeft.png");
@@ -84,13 +90,18 @@ public class App extends PApplet {
     public void settings() {
         size(WIDTH, HEIGHT);
     }
-
+    
+    /**
+     * Called on every frame of the game. Calls the <code>gameManager.tick()</code> function which runs all the logic for one frame and draws all the objects in one frame.
+     */
     public void draw() {
         background(0, 0, 0);
         gameManager.tick();
     }
     
-    // Register key presses
+    /** 
+     * Register key presses by the player and sends it to the <code>GameManager</code> object.
+     */
     public void keyPressed() {
         if (key == CODED) {
             if (keyCode == UP) {
