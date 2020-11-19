@@ -9,6 +9,11 @@ public class Whim extends Ghost {
         super(x, y, sprite, gm, gridX, gridY, 448, 576);
     }
 
+    /**
+     * Iterate through the chasers present in the game. If a chaser which has no
+     * paired whim is found, the whim pairs itself with a chaser. It then uses the
+     * Chaser's attack vector to generate its own.
+     */
     public void setChaser() {
         for (Ghost ghost : getGm().ghosts) {
             if (ghost instanceof Chaser) {
@@ -21,6 +26,16 @@ public class Whim extends Ghost {
         }
     }
 
+    /**
+     * Generates the vector for which the whim attacks. Its attack vector in chase
+     * mode is given by shifting the Chaser's vector by 2 grid spaces in the
+     * direction of Waka's travel, and then doubling it.
+     * 
+     * @param targetx The x coordinate of the target location
+     * @param targety The y coordinagte of the target location
+     * @return An array of two integers which is the intended direction of travel
+     *         for this ghost type.
+     */
     public int[] generateVectors(int targetx, int targety) {
         // target will be where the vector of the chaser + location of target
         // set new vector
@@ -48,7 +63,7 @@ public class Whim extends Ghost {
                 vector[1] = targety - this.getY();
 
                 if (getGm().player.getDirection().equals(Direction.Right)) {
-                    vector[0] += 64;
+                    vector[0] += 32;
                     if (getX() + vector[0] > 448) {
                         vector[0] = 448 - getX();
                     }
@@ -62,7 +77,7 @@ public class Whim extends Ghost {
                     if (getY() + vector[1] < 0) {
                         vector[1] = -getY();
                     }
-                } else if (getGm().player.getDirection().equals(Direction.Down)){
+                } else if (getGm().player.getDirection().equals(Direction.Down)) {
                     vector[1] += 64;
                     if (getY() + vector[1] > 576) {
                         vector[1] = 576 - getY();
@@ -72,6 +87,7 @@ public class Whim extends Ghost {
         }
         return vector;
     }
+
     public boolean hasChaser() {
         if (this.chaser != null) {
             return true;
