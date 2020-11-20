@@ -40,6 +40,7 @@ public class Waka extends Movable {
         setCollisionBorders();
         checkGhostCollision();
         resetIfDead();
+        System.out.println(this.getX());
     }
 
     /**

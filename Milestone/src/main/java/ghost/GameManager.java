@@ -66,10 +66,6 @@ public class GameManager {
      */
     protected final ArrayList<GameObject> objects;
     /**
-     * A list of all the walls in the game.
-     */
-    protected final ArrayList<Wall> wallList;
-    /**
      * A list of all the ghosts in the game.
      */
     protected final ArrayList<Ghost> ghosts;
@@ -89,7 +85,6 @@ public class GameManager {
     public GameManager(App app) {
         this.app = app;
         objects = new ArrayList<GameObject>();
-        wallList = new ArrayList<Wall>();
         modeLengths = new ArrayList<Long>();
         ghosts = new ArrayList<Ghost>();
         fruits = new ArrayList<Fruit>();
@@ -122,14 +117,8 @@ public class GameManager {
     public void tick() {
         // Game manager
         if (gameEnded == false) { // Game running
-            player.tick();
-            for (Ghost ghost : ghosts) {
-                ghost.tick();
-            }
-            for (Fruit fruit : fruits) {
-                fruit.tick();
-            }
             for (GameObject o : objects) {
+                o.tick();
                 if (o.getSprite() != null) {
                     o.draw();
                 }

@@ -58,7 +58,6 @@ public class Map {
                         || gm.grid.get(gridX)[gridY] == '5' || gm.grid.get(gridX)[gridY] == '6') {
                     Wall wall = new Wall(x, y, gm.grid.get(gridX)[gridY], this.gm, gridY, gridX);
                     gm.objects.add(wall);
-                    gm.wallList.add(wall);
                 } else if (gm.grid.get(gridX)[gridY] == '7') {
                     Fruit fruit = new Fruit(x, y, gm.app.fruitImage, this.gm, gridY, gridX);
                     gm.objects.add(fruit);

@@ -44,6 +44,11 @@ public abstract class Movable extends GameObject {
     }
 
     /**
+     * Uses the pixel coordinates to draw a collision border around the object.
+     */
+    
+    public abstract void setCollisionBorders();
+    /**
      * Takes into account a players direction, and changes their x and y velocity to
      * make them move in a particular direction. Changes their x and y velocity
      * using their speed which is read in the config file.

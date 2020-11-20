@@ -53,6 +53,13 @@ public class Fruit extends GameObject {
             return true;
         }
     }
+    
+    /**
+     * Restarts the fruit at the end of a game. Sets its alive status to true.
+     */
+    public void restartFruit() {
+        this.alive = true;
+    }
 
     /**
      * Returns if the fruit is alive or not
@@ -71,13 +78,6 @@ public class Fruit extends GameObject {
      */
     public void setAlive(boolean b) {
         this.alive = b;
-    }
-
-    /**
-     * Restarts the fruit at the end of a game. Sets its alive status to true.
-     */
-    public void restartFruit() {
-        this.alive = true;
     }
 
 }
