@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ghost.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Ghost.java</span></div><h1>Ghost.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+/**
+ * An abstract class for which the types of ghost extend from. Ghosts chase Waka
+ * around the map in chase mode, and in scatter mode, they target their home
+ * corner (depending on the type of ghost). Waka loses a life if hit by a ghost.
+ * If Waka has collected a superfruit, they will become frightened, and ghosts
+ * die if hit by Waka during this time. They move at random at intersections
+ * when frightened.
+ */
+public abstract class Ghost extends Movable {
+    // Scatter/Chase mode timer
+    private Mode mode;
+    private int frameCount;
+    private int cycleIndex;
+    private long cycleLength;
+    private long frightenedCount;
+    private long frightenedLength;
+    private Mode savedMode;
+    private boolean alive;
+
+    // Corner target coordinate
+    private final int[] corner;
+
+    public Ghost(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY, int cornerX, int cornerY) {
+<span class="fc" id="L31">        super(x, y, sprite, gm, gridX, gridY);</span>
+<span class="fc" id="L32">        this.alive = true;</span>
+
+        // Modes
+<span class="fc" id="L35">        this.mode = Mode.Scatter;</span>
+<span class="fc" id="L36">        this.frameCount = 0;</span>
+<span class="fc" id="L37">        this.cycleIndex = 0;</span>
+<span class="fc" id="L38">        this.cycleLength = getGm().modeLengths.get(cycleIndex) * 60;</span>
+<span class="fc" id="L39">        this.frameCount = 0;</span>
+<span class="fc" id="L40">        this.frightenedLength = getGm().frightenedLength * 60;</span>
+
+        // Collision
+<span class="fc" id="L43">        setBorderTop(getY() + 2);</span>
+<span class="fc" id="L44">        setBorderBot(getY() + 23);</span>
+<span class="fc" id="L45">        setBorderLeft(getX() + 2);</span>
+<span class="fc" id="L46">        setBorderRight(getX() + 25);</span>
+
+        // Set corner
+<span class="fc" id="L49">        this.corner = new int[2];</span>
+<span class="fc" id="L50">        this.corner[0] = cornerX;</span>
+<span class="fc" id="L51">        this.corner[1] = cornerY;</span>
+
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * &lt;code&gt;enum&lt;/code&gt; containing the possible Ghost modes.
+     */
+<span class="fc" id="L58">    public enum Mode {</span>
+<span class="fc" id="L59">        Scatter, Chase, Frightened</span>
+    }
+
+    /**
+     * Draws the ghost with either the normal sprite or the frightened sprite,
+     * depending on the ghost's mode.
+     */
+    public void draw() {
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if (alive) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (this.mode != Mode.Frightened) {</span>
+<span class="nc" id="L69">                getGm().app.image(getSprite(), getX() - 5, getY() - 6);</span>
+            } else { // If frightened, draw frightened image
+<span class="nc" id="L71">                getGm().app.image(getGm().app.frightenedImage, getX() - 5, getY() - 6);</span>
+            }
+        }
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Runs the ghost's logic. If the ghost is frightened, run the frightened timer.
+     * If the ghost is alive, it should be drawn, and if debug mode is on, a line
+     * from the ghost to the player should also be drawn. If the ghost is at an
+     * intersection, it will recalculate the best direction to travel in to reach
+     * its target. It then moves in the said direction, and updates its collision
+     * borders.
+     */
+    public void tick() {
+<span class="fc" id="L85">        checkIfFrightened();</span>
+<span class="fc" id="L86">        selectMode();</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (alive) {</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            if (getGm().debug) {</span>
+<span class="nc" id="L89">                drawTargetLine();</span>
+            }
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            if (canChangeDirection()) {</span>
+<span class="fc" id="L92">                selectDirection();</span>
+            }
+<span class="fc" id="L94">            move();</span>
+<span class="fc" id="L95">            setCollisionBorders();</span>
+        }
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Sets the collision borders for the ghost depending on the current x and y
+     * coordinates.
+     */
+    public void setCollisionBorders() {
+        // Set collision borders
+<span class="fc" id="L105">        setBorderTop(getY() + 2);</span>
+<span class="fc" id="L106">        setBorderBot(getY() + 23);</span>
+<span class="fc" id="L107">        setBorderLeft(getX() + 2);</span>
+<span class="fc" id="L108">        setBorderRight(getX() + 25);</span>
+<span class="fc" id="L109">    }</span>
+
+    /**
+     * Draws lines to target location from the ghost
+     */
+    public void drawTargetLine() {
+<span class="fc" id="L115">        int[] vector = null;</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (this.mode == Mode.Chase) {</span>
+<span class="nc" id="L117">            vector = generateVectors(getGm().player.getX(), getGm().player.getY());</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        } else if (this.mode == Mode.Scatter) {</span>
+<span class="fc" id="L119">            vector = generateVectors(this.corner[0], this.corner[1]);</span>
+        }
+<span class="pc bpc" id="L121" title="1 of 4 branches missed.">        if (this.mode != Mode.Frightened &amp;&amp; getGm().app.g != null) {</span>
+<span class="nc" id="L122">            getGm().app.g.line(this.getX(), this.getY(), vector[0] + this.getX(), vector[1] + this.getY());</span>
+<span class="nc" id="L123">            getGm().app.g.stroke(126);</span>
+        }
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Sets the direction of travel based on generation of next move. Passes in the
+     * player or the corner coordinates to get this set direction. See functions
+     * &lt;code&gt;generateNextMove(int, int)&lt;/code&gt; for more information.
+     */
+    public void selectDirection() {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (this.mode == Mode.Frightened) {</span>
+<span class="fc" id="L134">            setDirection(generateNextMove(0, 0));</span>
+<span class="fc" id="L135">            return;</span>
+        }
+        // If ghost is still, initialise travel direction
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if (getDirection() == Direction.Still) {</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            if (this.mode == Mode.Chase) {</span>
+<span class="fc" id="L140">                setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));</span>
+            } else {
+<span class="fc" id="L142">                setDirection(generateNextMove(this.corner[0], this.corner[1]));</span>
+            }
+        }
+        // Check if location appropriate for change of direction (intersection)
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        if (canChangeDirection()) {</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            if (this.mode.equals(Mode.Scatter)) {</span>
+<span class="fc" id="L148">                setDirection(generateNextMove(this.corner[0], this.corner[1]));</span>
+            } else {
+<span class="fc" id="L150">                setDirection(generateNextMove(getGm().player.getGridX() * 16, getGm().player.getGridY() * 16));</span>
+            }
+        }
+<span class="fc" id="L153">    }</span>
+
+    /**
+     * Selects mode based on timer and mode lengths configuration. Runs only if the
+     * ghost is not in frightened mode.
+     */
+    public void selectMode() {
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (this.mode != Mode.Frightened) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            if (this.frameCount &lt; this.cycleLength) {</span>
+<span class="fc" id="L162">                this.frameCount++;</span>
+            } else {
+<span class="fc" id="L164">                this.frameCount = 0;</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">                if (this.cycleIndex &lt; getGm().modeLengths.size() - 1) {</span>
+<span class="fc" id="L166">                    this.cycleIndex++;</span>
+<span class="fc" id="L167">                    this.cycleLength = getGm().modeLengths.get(this.cycleIndex) * 60;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                    if (this.cycleIndex % 2 == 1) {</span>
+<span class="fc" id="L169">                        this.mode = Mode.Chase;</span>
+                    } else {
+<span class="fc" id="L171">                        this.mode = Mode.Scatter;</span>
+                    }
+                } else {
+<span class="fc" id="L174">                    this.cycleIndex = 0;</span>
+<span class="fc" id="L175">                    this.cycleLength = getGm().modeLengths.get(this.cycleIndex) * 60;</span>
+<span class="fc" id="L176">                    this.mode = Mode.Chase;</span>
+                }
+            }
+        }
+<span class="fc" id="L180">    }</span>
+
+    /**
+     * Generates next move given a list of preferences for direction of travel.
+     * Please consult the &lt;code&gt;generatePreferences(Direction, int[])&lt;/code&gt;
+     * function for more information on how preferences are generated.
+     * 
+     * @param targetx x coordinate of target
+     * @param targety y coordinate of target
+     * @return Returns the next direction the ghost will move in.
+     */
+    public Direction generateNextMove(int targetx, int targety) {
+<span class="fc" id="L192">        int[] vector = generateVectors(targetx, targety);</span>
+<span class="fc" id="L193">        Direction preferredMove = null;</span>
+<span class="fc" id="L194">        ArrayList&lt;Direction&gt; preferenceList = generatePreferences(getDirection(), vector);</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        for (Direction preference : preferenceList) {</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            if (canGoDirection(preference)) {</span>
+<span class="fc" id="L197">                preferredMove = preference;</span>
+<span class="fc" id="L198">                break;// Go through preferences in order, execute first one which is valid</span>
+            }
+<span class="fc" id="L200">        }</span>
+<span class="fc" id="L201">        return preferredMove; // Default use last preference</span>
+    }
+
+    /**
+     * Check that ghost is at an intersection, and completely within a grid, so it
+     * can change direction.
+     * 
+     * @return True if the ghost is allowed to change direction, false if not.
+     */
+    public boolean canChangeDirection() {
+<span class="fc bfc" id="L211" title="All 4 branches covered.">        if (this.getX() % 16 == 0 &amp;&amp; this.getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L212" title="All 4 branches covered.">            if (getDirection() == Direction.Up || getDirection() == Direction.Down) {</span>
+<span class="pc bpc" id="L213" title="2 of 8 branches missed.">                if (!this.wallOnLeft() || !this.wallOnRight() || collideWallAbove() || collideWallBelow()) {</span>
+<span class="fc" id="L214">                    return true;</span>
+                } else {
+<span class="fc" id="L216">                    return false;</span>
+                }
+<span class="fc bfc" id="L218" title="All 4 branches covered.">            } else if (getDirection() == Direction.Left || getDirection() == Direction.Right) {</span>
+<span class="pc bpc" id="L219" title="2 of 8 branches missed.">                if (!this.wallBelow() || !this.wallAbove() || collideWallOnLeft() || collideWallOnRight()) {</span>
+<span class="fc" id="L220">                    return true;</span>
+                } else {
+<span class="fc" id="L222">                    return false;</span>
+                }
+            } else {
+<span class="fc" id="L225">                return true;</span>
+            }
+        } else {
+<span class="fc" id="L228">            return false;</span>
+        }
+    }
+
+    /**
+     * Determine if can go in a particular direction based on wall locations
+     * 
+     * @param direction The direction the ghost intends to travel in
+     * @return True if the ghost can travel in the direction provided, false if not
+     */
+    public boolean canGoDirection(Direction direction) {
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        if (direction == Direction.Right) {</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (wallOnRight()) {</span>
+<span class="fc" id="L241">                return false;</span>
+            }
+<span class="fc" id="L243">            return true;</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        } else if (direction == Direction.Left) {</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">            if (wallOnLeft()) {</span>
+<span class="fc" id="L246">                return false;</span>
+            } else {
+<span class="fc" id="L248">                return true;</span>
+            }
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        } else if (direction == Direction.Up) {</span>
+            // throw new RuntimeException();
+<span class="fc bfc" id="L252" title="All 2 branches covered.">            if (wallAbove()) {</span>
+<span class="fc" id="L253">                return false;</span>
+            } else {
+<span class="fc" id="L255">                return true;</span>
+            }
+        } else {
+<span class="fc bfc" id="L258" title="All 2 branches covered.">            if (wallBelow()) {</span>
+<span class="fc" id="L259">                return false;</span>
+            } else {
+<span class="fc" id="L261">                return true;</span>
+            }
+        }
+    }
+
+    /**
+     * Generate the vector to the target location, individual to each ghost type.
+     * 
+     * @param targetx x coordinate of target
+     * @param targety y coordinate of target
+     * @return array of two integers, with the first being the horizontal component
+     *         of the vector and the second being the vertical component
+     */
+    public abstract int[] generateVectors(int targetx, int targety);
+
+    /**
+     * Generate list of moves based on intended vector in preferred order. Takes
+     * into account the ghost's direction and a vector. The vector is generated by
+     * the &lt;code&gt;generateVectors&lt;/code&gt; function which is unique to each ghost type.
+     * If the ghost is in frightened mode, the preference list is shuffled to
+     * randomise the movement.
+     * 
+     * @param Direction The ghost's current direction of travel.
+     * @param vector    A two integer array which has a vertical and horizontal
+     *                  component aimed at the target direction.
+     * @return An array list of directions, with the first index corresponding to
+     *         the most preferred direction and the last being the least. The last
+     *         vector is always the current direction of travel.
+     */
+    public ArrayList&lt;Direction&gt; generatePreferences(Direction direction, int[] vector) {
+<span class="fc" id="L291">        ArrayList&lt;Direction&gt; preferenceList = new ArrayList&lt;Direction&gt;();</span>
+<span class="fc" id="L292">        int vectorx = vector[0];</span>
+<span class="fc" id="L293">        int vectory = vector[1];</span>
+
+<span class="fc bfc" id="L295" title="All 4 branches covered.">        if (vectorx &gt;= 0 &amp;&amp; vectory &gt;= 0) {</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">            if (vectorx &gt;= vectory) { // want to go right and down</span>
+<span class="fc" id="L297">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L298">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L299">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L300">                preferenceList.add(Direction.Left);</span>
+            } else { // want to go down and right
+<span class="fc" id="L302">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L303">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L304">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L305">                preferenceList.add(Direction.Up);</span>
+            }
+<span class="pc bpc" id="L307" title="1 of 4 branches missed.">        } else if (vectorx &gt;= 0 &amp;&amp; vectory &lt;= 0) {</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">            if (vectorx &gt;= -vectory) { // want to go right and up</span>
+<span class="fc" id="L309">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L310">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L311">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L312">                preferenceList.add(Direction.Left);</span>
+            } else { // want to go up and right
+<span class="fc" id="L314">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L315">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L316">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L317">                preferenceList.add(Direction.Down);</span>
+            }
+<span class="pc bpc" id="L319" title="1 of 4 branches missed.">        } else if (vectorx &lt;= 0 &amp;&amp; vectory &lt;= 0) {</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">            if (-vectorx &gt;= -vectory) { // want to go left and up</span>
+<span class="fc" id="L321">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L322">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L323">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L324">                preferenceList.add(Direction.Right);</span>
+            } else { // want to go up and left
+<span class="fc" id="L326">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L327">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L328">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L329">                preferenceList.add(Direction.Down);</span>
+            }
+        } else {
+<span class="fc bfc" id="L332" title="All 2 branches covered.">            if (-vectorx &gt;= vectory) { // want to go left and down</span>
+<span class="fc" id="L333">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L334">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L335">                preferenceList.add(Direction.Up);</span>
+<span class="fc" id="L336">                preferenceList.add(Direction.Right);</span>
+            } else { // want to go down and left
+<span class="fc" id="L338">                preferenceList.add(Direction.Down);</span>
+<span class="fc" id="L339">                preferenceList.add(Direction.Left);</span>
+<span class="fc" id="L340">                preferenceList.add(Direction.Right);</span>
+<span class="fc" id="L341">                preferenceList.add(Direction.Up);</span>
+            }
+        }
+
+<span class="fc bfc" id="L345" title="All 2 branches covered.">        if (this.mode.equals(Mode.Frightened)) {</span>
+            // Randomise preference list if in frightened mode
+<span class="fc" id="L347">            Collections.shuffle(preferenceList);</span>
+        }
+
+        // change opposite direction of movement as last preference
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        if (direction == Direction.Left) {</span>
+<span class="fc" id="L352">            preferenceList.remove(Direction.Right);</span>
+<span class="fc" id="L353">            preferenceList.add(Direction.Right);</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">        } else if (direction == Direction.Right) {</span>
+<span class="fc" id="L355">            preferenceList.remove(Direction.Left);</span>
+<span class="fc" id="L356">            preferenceList.add(Direction.Left);</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        } else if (direction == Direction.Up) {</span>
+<span class="fc" id="L358">            preferenceList.remove(Direction.Down);</span>
+<span class="fc" id="L359">            preferenceList.add(Direction.Down);</span>
+        } else {
+<span class="fc" id="L361">            preferenceList.remove(Direction.Up);</span>
+<span class="fc" id="L362">            preferenceList.add(Direction.Up);</span>
+        }
+
+<span class="fc" id="L365">        return preferenceList;</span>
+    }
+
+    /**
+     * Timer for frightened mode, if the ghost is in frightened mode. Once the timer
+     * exprires, the original mode is restored, and the frightened counter is reset
+     * back to zero.
+     */
+    public void checkIfFrightened() {
+<span class="fc bfc" id="L374" title="All 2 branches covered.">        if (this.mode == Mode.Frightened) {</span>
+<span class="fc" id="L375">            this.frightenedCount++;</span>
+<span class="fc bfc" id="L376" title="All 2 branches covered.">            if (this.frightenedCount == frightenedLength) {</span>
+<span class="fc" id="L377">                this.mode = this.savedMode;</span>
+<span class="fc" id="L378">                this.frightenedCount = 0;</span>
+            }
+        }
+<span class="fc" id="L381">    }</span>
+
+    /**
+     * Restart ghost when the game is restarting. Restores the start coordinate and
+     * state, resets the mode counters and mode length pointer.
+     */
+    public void restartGhost() {
+<span class="fc" id="L388">        setAlive(true);</span>
+
+        // Restart coordinates
+<span class="fc" id="L391">        setX(getStartX());</span>
+<span class="fc" id="L392">        setY(getStartY());</span>
+<span class="fc" id="L393">        setGridX((int) Math.floor(getX() / 16));</span>
+<span class="fc" id="L394">        setGridY((int) Math.floor(getY() / 16));</span>
+<span class="fc" id="L395">        setCollisionBorders();</span>
+
+        // Restart direction
+<span class="fc" id="L398">        setDirection(Direction.Still);</span>
+<span class="fc" id="L399">        setXVel(0);</span>
+<span class="fc" id="L400">        setYVel(0);</span>
+
+        // Restart modes
+<span class="fc" id="L403">        setMode(Mode.Scatter);</span>
+<span class="fc" id="L404">        frightenedCount = 0;</span>
+<span class="fc" id="L405">        this.frameCount = 0;</span>
+<span class="fc" id="L406">        this.cycleIndex = 0;</span>
+<span class="fc" id="L407">        this.cycleLength = getGm().modeLengths.get(cycleIndex) * 60;</span>
+<span class="fc" id="L408">        this.frameCount = 0;</span>
+<span class="fc" id="L409">        this.frightenedLength = getGm().frightenedLength * 60;</span>
+
+<span class="fc" id="L411">    }</span>
+
+    /**
+     * Returns the current mode of the ghost
+     * 
+     * @return The current mode of the ghost
+     */
+    public Mode getMode() {
+<span class="fc" id="L419">        return this.mode;</span>
+    }
+
+    /**
+     * Sets the current mode of the ghost
+     * 
+     * @param mode The mode of the ghost
+     */
+    public void setMode(Mode mode) {
+<span class="fc" id="L428">        this.mode = mode;</span>
+<span class="fc" id="L429">    }</span>
+
+    /**
+     * Gets the home corner coordinates of the ghost.
+     * 
+     * @return The home corner coordinates of the ghost;
+     */
+    public int[] getCorner() {
+<span class="fc" id="L437">        return this.corner;</span>
+    }
+
+    /**
+     * Returns the alive state of the ghost
+     * 
+     * @return True if alive, false if dead.
+     */
+    public boolean isAlive() {
+<span class="fc" id="L446">        return this.alive;</span>
+    }
+
+    /**
+     * Sets the alive state of the ghost
+     * 
+     * @param alive True if the ghost should be alive, false if it should be dead.
+     */
+    public void setAlive(boolean alive) {
+<span class="fc" id="L455">        this.alive = alive;</span>
+<span class="fc" id="L456">    }</span>
+
+    /**
+     * Sets the length of the current mode cycle of the ghost
+     * 
+     * @param cycleLength Length of the current mode cycle
+     */
+    public void setCycleLength(long cycleLength) {
+<span class="fc" id="L464">        this.cycleLength = cycleLength;</span>
+<span class="fc" id="L465">    }</span>
+
+    /**
+     * Sets the current frame count in a particular mode for a ghost, used in
+     * standard scatter and chase modes.
+     * 
+     * @param frameCount The current frame count for a ghost not in frightened mode.
+     */
+    public void setFrameCount(int frameCount) {
+<span class="fc" id="L474">        this.frameCount = frameCount;</span>
+<span class="fc" id="L475">    }</span>
+
+    /**
+     * Gets the current frame count in a particular mode for a ghost, used in
+     * standard scatter and chase modes.
+     * 
+     * @return The current frame count for a ghost not in frightened mode.
+     */
+    public int getFrameCount() {
+<span class="fc" id="L484">        return this.frameCount;</span>
+    }
+
+    /**
+     * Sets the pointer index of the ghost for the array of mode lengths
+     * 
+     * @param index The pointer index of the ghost for the array of mode lengths
+     */
+    public void setCycleIndex(int index) {
+<span class="fc" id="L493">        this.cycleIndex = index;</span>
+<span class="fc" id="L494">    }</span>
+
+    /**
+     * Gets the pointer index of the ghost for the array of mode lengths
+     * 
+     * @return The pointer index of the ghost for the array of mode lengths
+     */
+    public int getCycleIndex() {
+<span class="fc" id="L502">        return this.cycleIndex;</span>
+    }
+
+    // Frightened mode getters and setters
+    /**
+     * Sets the length in frames the ghost is frightened for.
+     * 
+     * @param length The length of time the ghost is frightened for in frames.
+     */
+    public void setFrightenedLength(long length) {
+<span class="fc" id="L512">        this.frightenedLength = length;</span>
+<span class="fc" id="L513">    }</span>
+
+    /**
+     * Gets the frightened timer counter number
+     * 
+     * @return frightenedCount frightened timer number
+     */
+    public long getFrightenedCount() {
+<span class="fc" id="L521">        return this.frightenedCount;</span>
+    }
+
+    /**
+     * Sets the frightened timer counter number
+     * 
+     * @param frightenedCount frightened timer number
+     */
+    public void setFrightenedCount(long frightenedCount) {
+<span class="fc" id="L530">        this.frightenedCount = frightenedCount;</span>
+<span class="fc" id="L531">    }</span>
+
+    /**
+     * Gets the saved mode of the ghost before frightened mode.
+     * 
+     * @return The saved mode of the ghost before frightened mode.
+     */
+    public Mode getSavedMode() {
+<span class="fc" id="L539">        return this.savedMode;</span>
+    }
+
+    /**
+     * Sets the saved mode of the ghost before frightened mode.
+     * 
+     * @param savedMode The saved mode of the ghost before frightened mode.
+     */
+    public void setSavedMode(Mode savedMode) {
+<span class="fc" id="L548">        this.savedMode = savedMode;</span>
+<span class="fc" id="L549">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">GameManager.java</span></div><h1>GameManager.java</h1><pre class="source lang-java linenums">package ghost;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import ghost.Movable.Direction;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+
+/**
+ * The game engine which processes all the logic of the game.
+ */
+public class GameManager {
+    /**
+     * The &lt;code&gt;App&lt;/code&gt; object running the game.
+     */
+    protected final App app;
+    // Game state
+    /**
+     * Boolean that toggles debug mode
+     */
+    protected boolean debug;
+    /**
+     * Boolean that is true if the game is ended, false if the game is underway.
+     */
+    protected boolean gameEnded;
+    /**
+     * The counter for the 10 second timer between games.
+     */
+    protected int gameEndedCount;
+    /**
+     * The next move inputted by the player.
+     */
+    protected Direction nextMove;
+
+    // Config options
+    /**
+     * The speed of the game. 1 or 2 depending on the config file.
+     */
+    protected long speed;
+    /**
+     * The number of lives waka has, specified by the config file.
+     */
+    protected long lives;
+    /**
+     * The name of the text file containing the map
+     */
+    protected String mapFileName;
+    /**
+     * The array of mode lengths specifying the duration of alternating between
+     * scatter and chase mode.
+     */
+    protected ArrayList&lt;Long&gt; modeLengths;
+    /**
+     * The length that ghosts are frightened for when the superfruit is collected.
+     */
+    protected long frightenedLength;
+
+    // Map Elements
+    /**
+     * An array list of all the objects in the game.
+     */
+    protected final ArrayList&lt;GameObject&gt; objects;
+    /**
+     * A list of all the ghosts in the game.
+     */
+    protected final ArrayList&lt;Ghost&gt; ghosts;
+    /**
+     * A list of all the fruit in the game.
+     */
+    protected final ArrayList&lt;Fruit&gt; fruits;
+    /**
+     * The player object of the game
+     */
+    protected Waka player;
+    /**
+     * A grid of characters that represent the map/
+     */
+    protected ArrayList&lt;char[]&gt; grid;
+
+<span class="fc" id="L85">    public GameManager(App app) {</span>
+<span class="fc" id="L86">        this.app = app;</span>
+<span class="fc" id="L87">        objects = new ArrayList&lt;GameObject&gt;();</span>
+<span class="fc" id="L88">        modeLengths = new ArrayList&lt;Long&gt;();</span>
+<span class="fc" id="L89">        ghosts = new ArrayList&lt;Ghost&gt;();</span>
+<span class="fc" id="L90">        fruits = new ArrayList&lt;Fruit&gt;();</span>
+<span class="fc" id="L91">        debug = false;</span>
+<span class="fc" id="L92">        gameEnded = false;</span>
+<span class="fc" id="L93">        gameEndedCount = 0;</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Reads configuration file, reads map file and generates all the game objects.
+     */
+    public void setUp() {
+<span class="fc" id="L100">        this.readConfig();</span>
+<span class="fc" id="L101">        File file = new File(this.mapFileName);</span>
+<span class="fc" id="L102">        Map map = new Map(file, this);</span>
+<span class="fc" id="L103">        map.generateObjects();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (Ghost ghost : ghosts) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if (ghost instanceof Whim) {</span>
+<span class="fc" id="L106">                ((Whim) ghost).setChaser();</span>
+            }
+<span class="fc" id="L108">        }</span>
+<span class="fc" id="L109">    }</span>
+
+    /**
+     * Runs all the logic in the game. When the game is in progress, it calls the
+     * &lt;code&gt;tick()&lt;/code&gt; functions of all the game objects and draws all the game
+     * objects. If game is won or lost, it displays the win/lose screen and counts
+     * 10 seconds before restarting the game.
+     */
+    public void tick() {
+        // Game manager
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (gameEnded == false) { // Game running</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            for (GameObject o : objects) {</span>
+<span class="fc" id="L121">                o.tick();</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                if (o.getSprite() != null) {</span>
+<span class="nc" id="L123">                    o.draw();</span>
+                }
+<span class="fc" id="L125">            }</span>
+<span class="pc bpc" id="L126" title="1 of 4 branches missed.">            if (player.getLives() == 0 || Fruit.fruitLeft(this) == false) {</span>
+<span class="fc" id="L127">                gameEnded = true;</span>
+            }
+        } else { // In between games
+<span class="fc" id="L130">            gameEndedCount++;</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (app.endScreenFont != null) {</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                if (player.getLives() == 0) {</span>
+<span class="nc" id="L133">                    app.textFont(app.endScreenFont, 20);</span>
+<span class="nc" id="L134">                    app.fill(255);</span>
+<span class="nc" id="L135">                    app.text(&quot;GAME OVER&quot;, 132, 240);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                } else if (Fruit.fruitLeft(this) == false) {</span>
+<span class="nc" id="L137">                    app.textFont(app.endScreenFont, 20);</span>
+<span class="nc" id="L138">                    app.fill(255);</span>
+<span class="nc" id="L139">                    app.text(&quot;YOU WIN&quot;, 152, 240);</span>
+                }
+            }
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (gameEndedCount == 600) {</span>
+<span class="fc" id="L143">                restartGame();</span>
+            }
+        }
+<span class="fc" id="L146">    }</span>
+
+    /**
+     * Uses &lt;code&gt;JSONParser&lt;/code&gt; to parse through the JSON config file, and sets
+     * all the variables that the config file changes.
+     */
+    public void readConfig() {
+<span class="fc" id="L153">        JSONParser parser = new JSONParser();</span>
+        try {
+<span class="fc" id="L155">            JSONObject configFile = (JSONObject) parser.parse(new FileReader(&quot;config.json&quot;));</span>
+<span class="fc" id="L156">            this.speed = (long) configFile.get(&quot;speed&quot;);</span>
+<span class="fc" id="L157">            this.lives = (long) configFile.get(&quot;lives&quot;);</span>
+<span class="fc" id="L158">            this.frightenedLength = (long) configFile.get(&quot;frightenedLength&quot;);</span>
+<span class="fc" id="L159">            this.mapFileName = (String) configFile.get(&quot;map&quot;);</span>
+            // JSON Array
+<span class="fc" id="L161">            JSONArray modeLengths = (JSONArray) configFile.get(&quot;modeLengths&quot;);</span>
+<span class="fc" id="L162">            Iterator&lt;?&gt; modeLengthsIterator = modeLengths.iterator();</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            while (modeLengthsIterator.hasNext()) {</span>
+<span class="fc" id="L164">                long length = (Long) (Object) modeLengthsIterator.next();</span>
+<span class="fc" id="L165">                this.modeLengths.add(length);</span>
+<span class="fc" id="L166">            }</span>
+<span class="nc" id="L167">        } catch (Exception e) {</span>
+<span class="nc" id="L168">            e.printStackTrace();</span>
+<span class="fc" id="L169">        }</span>
+<span class="fc" id="L170">    }</span>
+
+    /**
+     * Called when the 10 second timer between games expires. Calls restart function
+     * of player, ghosts and fruit. Resets the game ended timer and sets
+     * &lt;code&gt;gameEnded&lt;/code&gt; variable to false.
+     */
+    public void restartGame() {
+        // Restart player
+<span class="fc" id="L179">        player.playerRestart();</span>
+        // Restart ghosts
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for (Ghost ghost : ghosts) {</span>
+<span class="fc" id="L182">            ghost.restartGhost();</span>
+<span class="fc" id="L183">        }</span>
+        // Restart fruits
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        for (Fruit fruit : fruits) {</span>
+<span class="fc" id="L186">            fruit.restartFruit();</span>
+<span class="fc" id="L187">        }</span>
+        // Reset end game count
+<span class="fc" id="L189">        gameEndedCount = 0;</span>
+<span class="fc" id="L190">        gameEnded = false;</span>
+<span class="fc" id="L191">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

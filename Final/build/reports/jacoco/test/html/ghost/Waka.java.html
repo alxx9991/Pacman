@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Waka.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Waka.java</span></div><h1>Waka.java</h1><pre class="source lang-java linenums">package ghost;
+
+import ghost.Ghost.Mode;
+import processing.core.PImage;
+
+/**
+ * The main player of the game. Attempts to eat all the fruit without colliding
+ * with ghosts. Moves at the same speed as ghosts. Has a number of lives set by
+ * the config file. If all the lives are lost, the game is over.
+ */
+public class Waka extends Movable {
+    private int frameCycle;
+    private final PImage closedSprite;
+    boolean alive;
+    private long lives;
+
+    public Waka(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+<span class="fc" id="L18">        super(x, y, sprite, gm, gridX, gridY);</span>
+<span class="fc" id="L19">        this.frameCycle = 0;</span>
+<span class="fc" id="L20">        this.closedSprite = getGm().app.closedImage;</span>
+<span class="fc" id="L21">        setDirection(Direction.Still);</span>
+<span class="fc" id="L22">        this.alive = true;</span>
+<span class="fc" id="L23">        this.lives = getGm().lives;</span>
+<span class="fc" id="L24">        setBorderTop(getY() + 2);</span>
+<span class="fc" id="L25">        setBorderBot(getY() + 22);</span>
+<span class="fc" id="L26">        setBorderLeft(getX() + 2);</span>
+<span class="fc" id="L27">        setBorderRight(getX() + 21);</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * Logic performed in each frame: Selects a direction based on the player input
+     * and waka position and direction. Moves in said direction. Update collision
+     * borders, then check if there is a ghost collision. If the player has been
+     * killed by a ghost, call the &lt;code&gt;resetIfDead()&lt;/code&gt; method which resets
+     * the player and ghosts back to starting position.
+     */
+    public void tick() {
+<span class="fc" id="L38">        selectDirection();</span>
+<span class="fc" id="L39">        move();</span>
+<span class="fc" id="L40">        setCollisionBorders();</span>
+<span class="fc" id="L41">        checkGhostCollision();</span>
+<span class="fc" id="L42">        resetIfDead();</span>
+<span class="fc" id="L43">        System.out.println(this.getX());</span>
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * Reset waka and ghost locations if dead, and remove a life
+     */
+    public void resetIfDead() {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (this.alive == false) {</span>
+<span class="fc" id="L51">            this.lives -= 1;</span>
+<span class="fc" id="L52">            setX(getStartX());</span>
+<span class="fc" id="L53">            setY(getStartY());</span>
+<span class="fc" id="L54">            setDirection(Direction.Still);</span>
+<span class="fc" id="L55">            setGridX((int) Math.floor(getX() / 16));</span>
+<span class="fc" id="L56">            setGridY((int) Math.floor(getY() / 16));</span>
+<span class="fc" id="L57">            setCollisionBorders();</span>
+<span class="fc" id="L58">            setXVel(0);</span>
+<span class="fc" id="L59">            setYVel(0);</span>
+<span class="fc" id="L60">            this.alive = true;</span>
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            for (Ghost ghost : getGm().ghosts) {</span>
+<span class="fc" id="L63">                ghost.setAlive(true);</span>
+<span class="fc" id="L64">                ghost.setX(ghost.getStartX());</span>
+<span class="fc" id="L65">                ghost.setY(ghost.getStartY());</span>
+<span class="fc" id="L66">                ghost.setGridX((int) Math.floor(ghost.getX() / 16));</span>
+<span class="fc" id="L67">                ghost.setGridY((int) Math.floor(ghost.getY() / 16));</span>
+<span class="fc" id="L68">                ghost.setCollisionBorders();</span>
+<span class="fc" id="L69">                ghost.setDirection(Direction.Still);</span>
+<span class="fc" id="L70">                ghost.setXVel(0);</span>
+<span class="fc" id="L71">                ghost.setYVel(0);</span>
+
+<span class="fc" id="L73">            }</span>
+
+        }
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Set collision boundaries
+     */
+    public void setCollisionBorders() {
+<span class="fc" id="L82">        setBorderTop(getY() + 2);</span>
+<span class="fc" id="L83">        setBorderBot(getY() + 22);</span>
+<span class="fc" id="L84">        setBorderLeft(getX() + 2);</span>
+<span class="fc" id="L85">        setBorderRight(getX() + 21);</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Choose direction based on the player's input, and the
+     */
+    public void selectDirection() {
+        // If player is still, select direction based on choice
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (getDirection().equals(Direction.Still)) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">            if (getGm().nextMove == null) {</span>
+<span class="fc" id="L95">                return;</span>
+            }
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            if (getGm().nextMove.equals(Direction.Left)) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                if (!wallOnLeft()) {</span>
+<span class="fc" id="L99">                    setDirection(Direction.Left);</span>
+                } else {
+<span class="fc" id="L101">                    getGm().nextMove = null;</span>
+                }
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Right)) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                if (!wallOnRight()) {</span>
+<span class="fc" id="L105">                    setDirection(Direction.Right);</span>
+                } else {
+<span class="fc" id="L107">                    getGm().nextMove = null;</span>
+                }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Down)) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                if (!wallBelow()) {</span>
+<span class="fc" id="L111">                    setDirection(Direction.Down);</span>
+                } else {
+<span class="fc" id="L113">                    getGm().nextMove = null;</span>
+                }
+            } else {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                if (!wallAbove()) {</span>
+<span class="fc" id="L117">                    setDirection(Direction.Up);</span>
+                } else {
+<span class="fc" id="L119">                    getGm().nextMove = null;</span>
+                }
+            }
+<span class="fc" id="L122">            return;</span>
+        }
+
+        // If player is currently moving, select direction based on available choices
+        // and desired direction
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if (getGm().nextMove == null) {</span>
+<span class="fc" id="L128">            checkWallCollision();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Right)) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if (getGm().nextMove.equals(Direction.Left)) {</span>
+<span class="fc" id="L131">                checkWallCollision();</span>
+<span class="fc" id="L132">                setDirection(Direction.Left);</span>
+<span class="fc" id="L133">                getGm().nextMove = null;</span>
+
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Up)) {</span>
+<span class="fc" id="L136">                checkWallCollision();</span>
+<span class="fc bfc" id="L137" title="All 4 branches covered.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">                    if (wallAbove() == false) {</span>
+<span class="fc" id="L139">                        setDirection(Direction.Up);</span>
+<span class="fc" id="L140">                        getGm().nextMove = null;</span>
+                    }
+                }
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Down)) {</span>
+<span class="fc" id="L144">                checkWallCollision();</span>
+<span class="fc bfc" id="L145" title="All 4 branches covered.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                    if (wallBelow() == false) {</span>
+<span class="fc" id="L147">                        setDirection(Direction.Down);</span>
+<span class="fc" id="L148">                        getGm().nextMove = null;</span>
+                    }
+                }
+            } else {
+<span class="fc" id="L152">                checkWallCollision();</span>
+                ;
+            }
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Left)) {</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            if (getGm().nextMove.equals(Direction.Right)) {</span>
+<span class="fc" id="L157">                checkWallCollision();</span>
+<span class="fc" id="L158">                setDirection(Direction.Right);</span>
+<span class="fc" id="L159">                getGm().nextMove = null;</span>
+
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Up)) {</span>
+<span class="fc" id="L162">                checkWallCollision();</span>
+<span class="fc bfc" id="L163" title="All 4 branches covered.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    if (wallAbove() == false) {</span>
+<span class="fc" id="L165">                        setDirection(Direction.Up);</span>
+<span class="fc" id="L166">                        getGm().nextMove = null;</span>
+                    }
+                }
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Down)) {</span>
+<span class="fc" id="L170">                checkWallCollision();</span>
+<span class="fc bfc" id="L171" title="All 4 branches covered.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">                    if (wallBelow() == false) {</span>
+<span class="fc" id="L173">                        setDirection(Direction.Down);</span>
+<span class="fc" id="L174">                        getGm().nextMove = null;</span>
+                    }
+                }
+            } else {
+<span class="fc" id="L178">                checkWallCollision();</span>
+                ;
+            }
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Up)) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">            if (getGm().nextMove.equals(Direction.Down)) {</span>
+<span class="fc" id="L183">                checkWallCollision();</span>
+<span class="fc" id="L184">                setDirection(Direction.Down);</span>
+<span class="fc" id="L185">                getGm().nextMove = null;</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Left)) {</span>
+<span class="fc" id="L187">                checkWallCollision();</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                    if (wallOnLeft() == false) {</span>
+<span class="fc" id="L190">                        setDirection(Direction.Left);</span>
+<span class="fc" id="L191">                        getGm().nextMove = null;</span>
+                    }
+                }
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Right)) {</span>
+<span class="fc" id="L195">                checkWallCollision();</span>
+<span class="pc bpc" id="L196" title="1 of 4 branches missed.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">                    if (wallOnRight() == false) {</span>
+<span class="fc" id="L198">                        setDirection(Direction.Right);</span>
+<span class="fc" id="L199">                        getGm().nextMove = null;</span>
+                    }
+                }
+            } else {
+<span class="fc" id="L203">                checkWallCollision();</span>
+                ;
+            }
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        } else if (getDirection().equals(Direction.Down)) {</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            if (getGm().nextMove.equals(Direction.Up)) {</span>
+<span class="fc" id="L208">                checkWallCollision();</span>
+<span class="fc" id="L209">                setDirection(Direction.Up);</span>
+<span class="fc" id="L210">                getGm().nextMove = null;</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Left)) {</span>
+<span class="fc" id="L212">                checkWallCollision();</span>
+<span class="fc bfc" id="L213" title="All 4 branches covered.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                    if (wallOnLeft() == false) {</span>
+<span class="fc" id="L215">                        setDirection(Direction.Left);</span>
+<span class="fc" id="L216">                        getGm().nextMove = null;</span>
+                    }
+                }
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            } else if (getGm().nextMove.equals(Direction.Right)) {</span>
+<span class="fc" id="L220">                checkWallCollision();</span>
+<span class="fc bfc" id="L221" title="All 4 branches covered.">                if (getX() % 16 == 0 &amp;&amp; getY() % 16 == 0) {</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                    if (wallOnRight() == false) {</span>
+<span class="fc" id="L223">                        setDirection(Direction.Right);</span>
+<span class="fc" id="L224">                        getGm().nextMove = null;</span>
+                    }
+                }
+            } else {
+<span class="fc" id="L228">                checkWallCollision();</span>
+                ;
+            }
+        }
+<span class="fc" id="L232">    }</span>
+
+    /**
+     * Use frame cycle to determine if the sprite should be open or closed, and set
+     * the sprite as open if it should be open
+     * 
+     * @return True if sprite should be open, closed if sprite should be closed
+     */
+    public boolean determineSpriteOpen() {
+<span class="fc" id="L241">        boolean open = false;</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (this.frameCycle &lt;= 7) {</span>
+<span class="fc" id="L243">            setSpriteOpen();</span>
+<span class="fc" id="L244">            open = true;</span>
+<span class="fc bfc" id="L245" title="All 4 branches covered.">        } else if (this.frameCycle &gt;= 16 &amp;&amp; this.frameCycle &lt;= 23) {</span>
+<span class="fc" id="L246">            setSpriteOpen();</span>
+<span class="fc" id="L247">            open = true;</span>
+        }
+
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        if (this.frameCycle == 31) {</span>
+<span class="fc" id="L251">            this.frameCycle = 0;</span>
+        } else {
+<span class="fc" id="L253">            this.frameCycle++;</span>
+        }
+
+<span class="fc" id="L256">        return open;</span>
+    }
+
+    /**
+     * Changes the open sprite to face different directions depending on waka's
+     * direction of travel
+     */
+    public void setSpriteOpen() {
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        if (getDirection().equals(Direction.Left)) {</span>
+<span class="fc" id="L265">            setSprite(getGm().app.faceLeftImage);</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Right)) {</span>
+<span class="fc" id="L267">            setSprite(getGm().app.faceRightImage);</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Down)) {</span>
+<span class="fc" id="L269">            setSprite(getGm().app.faceDownImage);</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Up)) {</span>
+<span class="fc" id="L271">            setSprite(getGm().app.faceUpImage);</span>
+        }
+<span class="fc" id="L273">    }</span>
+
+    /**
+     * Draw either the closed or open sprite depending on whether
+     * &lt;code&gt;this.determineSpriteOpen&lt;/code&gt; returns true or not. Also draws the
+     * lives waka has depending on his lives remaining.
+     */
+    public void draw() {
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if (getSprite() != null) {</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">            if (this.determineSpriteOpen()) {</span>
+<span class="nc" id="L283">                getGm().app.image(getSprite(), getX() - 4, getY() - 5);</span>
+            } else {
+<span class="nc" id="L285">                getGm().app.image(closedSprite, getX() - 4, getY() - 5);</span>
+            }
+        }
+
+        // Display lives
+<span class="fc" id="L290">        int lifeX = 8;</span>
+<span class="fc" id="L291">        int lifeY = 543;</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">        for (int i = 0; i &lt; lives; i++) {</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">            if (getGm().app.faceRightImage != null) {</span>
+<span class="nc" id="L294">                getGm().app.image(getGm().app.faceRightImage, lifeX, lifeY);</span>
+            }
+<span class="fc" id="L296">            lifeX += 30;</span>
+        }
+<span class="fc" id="L298">    }</span>
+
+    /**
+     * Check if the player is colliding into a wall. Used when the player has not
+     * provided valid input at a junction.
+     */
+    public void checkWallCollision() {
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        if (getDirection().equals(Direction.Right)) {</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">            if (collideWallOnRight()) {</span>
+<span class="fc" id="L307">                setXVel(0);</span>
+<span class="fc" id="L308">                setYVel(0);</span>
+<span class="fc" id="L309">                setDirection(Direction.Still);</span>
+<span class="fc" id="L310">                getGm().nextMove = null;</span>
+            }
+<span class="fc bfc" id="L312" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Left)) {</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">            if (collideWallOnLeft()) {</span>
+<span class="fc" id="L314">                setXVel(0);</span>
+<span class="fc" id="L315">                setYVel(0);</span>
+<span class="fc" id="L316">                setDirection(Direction.Still);</span>
+<span class="fc" id="L317">                getGm().nextMove = null;</span>
+            }
+<span class="fc bfc" id="L319" title="All 2 branches covered.">        } else if (getDirection().equals(Direction.Up)) {</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">            if (collideWallAbove()) {</span>
+<span class="fc" id="L321">                setXVel(0);</span>
+<span class="fc" id="L322">                setYVel(0);</span>
+<span class="fc" id="L323">                setDirection(Direction.Still);</span>
+<span class="fc" id="L324">                getGm().nextMove = null;</span>
+            }
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">        } else if (getDirection().equals(Direction.Down)) {</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">            if (collideWallBelow()) {</span>
+<span class="fc" id="L328">                setXVel(0);</span>
+<span class="fc" id="L329">                setYVel(0);</span>
+<span class="fc" id="L330">                setDirection(Direction.Still);</span>
+<span class="fc" id="L331">                getGm().nextMove = null;</span>
+            }
+        }
+<span class="fc" id="L334">    }</span>
+
+    /**
+     * Check for collision with ghost based on player and ghost collision
+     * boundaries, and set player/ghost alive boolean based on mode
+     */
+    public void checkGhostCollision() {
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        for (Ghost ghost : getGm().ghosts) {</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">            if (ghost.isAlive()) {</span>
+<span class="fc" id="L343">                boolean collided = false;</span>
+<span class="fc bfc" id="L344" title="All 4 branches covered.">                if (this.getBorderRight() &gt;= ghost.getBorderLeft() &amp;&amp; this.getBorderRight() &lt;= ghost.getBorderRight()</span>
+<span class="pc bpc" id="L345" title="1 of 4 branches missed.">                        &amp;&amp; this.getBorderBot() &gt;= ghost.getBorderTop() &amp;&amp; this.getBorderBot() &lt;= ghost.getBorderBot()) {</span>
+<span class="fc" id="L346">                    collided = true;</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">                } else if (this.getBorderLeft() &lt;= ghost.getBorderRight()</span>
+<span class="pc bpc" id="L348" title="1 of 4 branches missed.">                        &amp;&amp; this.getBorderLeft() &gt;= ghost.getBorderLeft() &amp;&amp; this.getBorderBot() &gt;= ghost.getBorderTop()</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">                        &amp;&amp; this.getBorderBot() &lt;= ghost.getBorderBot()) {</span>
+<span class="fc" id="L350">                    collided = true;</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">                } else if (this.getBorderLeft() &lt;= ghost.getBorderRight()</span>
+<span class="pc bpc" id="L352" title="1 of 4 branches missed.">                        &amp;&amp; this.getBorderLeft() &gt;= ghost.getBorderLeft() &amp;&amp; this.getBorderTop() &lt;= ghost.getBorderBot()</span>
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">                        &amp;&amp; this.getBorderTop() &gt;= ghost.getBorderTop()) {</span>
+<span class="fc" id="L354">                    collided = true;</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">                } else if (this.getBorderRight() &gt;= ghost.getBorderLeft()</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">                        &amp;&amp; this.getBorderRight() &lt;= ghost.getBorderRight()</span>
+<span class="pc bpc" id="L357" title="1 of 4 branches missed.">                        &amp;&amp; this.getBorderTop() &lt;= ghost.getBorderBot() &amp;&amp; this.getBorderTop() &gt;= ghost.getBorderTop()) {</span>
+<span class="fc" id="L358">                    collided = true;</span>
+                }
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                if (collided) {</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">                    if (ghost.getMode() == Mode.Frightened) {</span>
+<span class="fc" id="L362">                        ghost.setAlive(false);</span>
+                    } else {
+<span class="fc" id="L364">                        this.alive = false;</span>
+                    }
+                }
+            }
+<span class="fc" id="L368">        }</span>
+<span class="fc" id="L369">    }</span>
+
+    /**
+     * Restart player when game restarts
+     */
+    public void playerRestart() {
+<span class="fc" id="L375">        setX(getStartX());</span>
+<span class="fc" id="L376">        setY(getStartY());</span>
+<span class="fc" id="L377">        setDirection(Direction.Still);</span>
+<span class="fc" id="L378">        setGridX((int) Math.floor(getX() / 16));</span>
+<span class="fc" id="L379">        setGridY((int) Math.floor(getY() / 16));</span>
+<span class="fc" id="L380">        setCollisionBorders();</span>
+<span class="fc" id="L381">        setXVel(0);</span>
+<span class="fc" id="L382">        setYVel(0);</span>
+<span class="fc" id="L383">        setAlive(true);</span>
+<span class="fc" id="L384">        setLives(getGm().lives);</span>
+<span class="fc" id="L385">    }</span>
+
+    /**
+     * Sets the alive status of waka
+     * 
+     * @param b Alive boolean.
+     */
+    public void setAlive(boolean b) {
+<span class="fc" id="L393">        this.alive = b;</span>
+<span class="fc" id="L394">    }</span>
+
+    /**
+     * Returns the alive status of waka
+     * 
+     * @return True if waka is alive, false if waka is dead.
+     */
+    public boolean isAlive() {
+<span class="fc" id="L402">        return this.alive;</span>
+    }
+
+    /**
+     * Returns the number of lives waka has
+     * 
+     * @return The number of lives waka has
+     */
+    public long getLives() {
+<span class="fc" id="L411">        return this.lives;</span>
+    }
+
+    /**
+     * Sets number of lives waka has
+     * 
+     * @param lives The number of lives waka has.
+     */
+    public void setLives(long lives) {
+<span class="fc" id="L420">        this.lives = lives;</span>
+<span class="fc" id="L421">    }</span>
+
+    /**
+     * Gets the frame cycle waka is on, used for calculating the sprite open/closed
+     * position.
+     * 
+     * @return The frame cycle waka is on.
+     */
+    public int getFrameCycle() {
+<span class="fc" id="L430">        return this.frameCycle;</span>
+    }
+
+    /**
+     * Sets the frame cycle waka is on, used for calculating the sprite open/closed
+     * position.
+     * 
+     * @param frameCycle The frame cycle waka is on.
+     */
+    public void setFrameCycle(int frameCycle) {
+<span class="fc" id="L440">        this.frameCycle = frameCycle;</span>
+<span class="fc" id="L441">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

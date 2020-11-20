@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ignorant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Ignorant.java</span></div><h1>Ignorant.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+
+/**
+ * A type of ghost which in chase mode, only targets Waka if he is more than 8
+ * units away (straight line distance). Otherwise, he will target his home
+ * corner, the bottom left corner.
+ */
+public class Ignorant extends Ghost {
+    public Ignorant(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+<span class="fc" id="L12">        super(x, y, sprite, gm, gridX, gridY, 0, 576);</span>
+<span class="fc" id="L13">    }</span>
+
+    /**
+     * Generates the vector for which the ignorant attacks. Directly targets waka if
+     * the distance to waka is less than 8 grid spaces, and it is in chase mode.
+     * Else, it targets its corner.
+     * 
+     * @param targetx The x coordinate of the target location
+     * @param targety The y coordinagte of the target location
+     * @return An array of two integers which is the intended direction of travel
+     *         for this ghost type.
+     */
+
+    public int[] generateVectors(int targetx, int targety) {
+<span class="fc" id="L27">        int[] vector = new int[2];</span>
+<span class="fc" id="L28">        vector[0] = targetx - this.getX();</span>
+<span class="fc" id="L29">        vector[1] = targety - this.getY();</span>
+
+        // Calculate distance to waka
+<span class="fc" id="L32">        double distance = Math.pow(Math.pow((double) vector[0] / 16.0, 2.0) + Math.pow((double) vector[1] / 16.0, 2.0),</span>
+                0.5);
+
+        // If in chase mode and distance is less than 8, target corner
+<span class="fc bfc" id="L36" title="All 4 branches covered.">        if (getMode().equals(Mode.Chase) &amp;&amp; distance &lt;= 8) {</span>
+<span class="fc" id="L37">            vector[0] = getCorner()[0] - getX();</span>
+<span class="fc" id="L38">            vector[1] = getCorner()[1] - getY();</span>
+        }
+<span class="fc" id="L40">        return vector;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Chaser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Chaser.java</span></div><h1>Chaser.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+
+/**
+ * A type of ghost which directly targets and chases Waka. Its corner is the top
+ * left corner.
+ */
+public class Chaser extends Ghost {
+    private boolean hasWhim;
+
+    public Chaser(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+<span class="fc" id="L13">        super(x, y, sprite, gm, gridX, gridY, 0, 0);</span>
+<span class="fc" id="L14">        this.hasWhim = false;</span>
+<span class="fc" id="L15">    }</span>
+
+    /**
+     * Generates the vector for which the chaser attacks. Directly targets waka.
+     * 
+     * @param targetx The x coordinate of the target location
+     * @param targety The y coordinagte of the target location
+     * @return An array of two integers which is the intended direction of travel
+     *         for this ghost type.
+     */
+    public int[] generateVectors(int targetx, int targety) {
+<span class="fc" id="L26">        int[] vector = new int[2];</span>
+<span class="fc" id="L27">        vector[0] = targetx - this.getX();</span>
+<span class="fc" id="L28">        vector[1] = targety - this.getY();</span>
+<span class="fc" id="L29">        return vector;</span>
+    }
+
+    /**
+     * Set the status of if the chaser has a paired whim.
+     * 
+     * @param hasWhim Boolean of if the chaser has a paired whim.
+     */
+    public void setHasWhim(boolean hasWhim) {
+<span class="fc" id="L38">        this.hasWhim = hasWhim;</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Gets the status of if the chaser has a paired whim.
+     * 
+     * @return True if the chaser is paired with a whim, false if it is not.
+     */
+    public boolean hasWhim() {
+<span class="fc" id="L47">        return this.hasWhim;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

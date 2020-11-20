@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ghost.GameManagerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2020-11-20T01:44:39" hostname="vlan-2644-10-16-180-245.student.wireless.sydney.edu.au" time="0.006">
+  <properties/>
+  <testcase name="constructorTest()" classname="ghost.GameManagerTest" time="0.001"/>
+  <testcase name="setUpTest()" classname="ghost.GameManagerTest" time="0.001"/>
+  <testcase name="tickTest()" classname="ghost.GameManagerTest" time="0.003"/>
+  <system-out><![CDATA[208
+208
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PApplet;
+import processing.core.PFont;
+import processing.core.PImage;
+
+import ghost.Movable.Direction;
+
+/**
+ * Subclass of PApplet used to run the game with processing.
+ */
+public class App extends PApplet {
+    public static final int WIDTH = 448;
+    public static final int HEIGHT = 576;
+
+    // Game manager
+    /**
+     * Game engine: handles the game logic.
+     */
+    protected GameManager gameManager;
+
+    // Wall Images
+    protected PImage downLeftImage;
+    protected PImage downRightImage;
+    protected PImage upLeftImage;
+    protected PImage upRightImage;
+    protected PImage horizontalImage;
+    protected PImage verticalImage;
+
+    // Fruit Image
+    protected PImage fruitImage;
+
+    // Waka Images
+    protected PImage faceLeftImage;
+    protected PImage faceRightImage;
+    protected PImage faceUpImage;
+    protected PImage faceDownImage;
+    protected PImage closedImage;
+
+    // Ghost images
+    protected PImage ambusherImage;
+    protected PImage chaserImage;
+    protected PImage ignorantImage;
+    protected PImage whimImage;
+    protected PImage frightenedImage;
+
+    // Font
+    protected PFont endScreenFont;
+
+<span class="fc" id="L50">    public App() {</span>
+<span class="fc" id="L51">        this.gameManager = new GameManager(this);</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Load all the images and fonts in the game, and calls the
+     * &lt;code&gt;gameManager.setUp()&lt;/code&gt; function.
+     */
+    public void setup() {
+<span class="nc" id="L59">        frameRate(60);</span>
+
+        // Load font
+<span class="nc" id="L62">        this.endScreenFont = createFont(&quot;PressStart2P-Regular.ttf&quot;, 10);</span>
+
+        // Load walls
+<span class="nc" id="L65">        this.downLeftImage = this.loadImage(&quot;downLeft.png&quot;);</span>
+<span class="nc" id="L66">        this.downRightImage = this.loadImage(&quot;downRight.png&quot;);</span>
+<span class="nc" id="L67">        this.upLeftImage = this.loadImage(&quot;upLeft.png&quot;);</span>
+<span class="nc" id="L68">        this.upRightImage = this.loadImage(&quot;upRight.png&quot;);</span>
+<span class="nc" id="L69">        this.verticalImage = this.loadImage(&quot;vertical.png&quot;);</span>
+<span class="nc" id="L70">        this.horizontalImage = this.loadImage(&quot;horizontal.png&quot;);</span>
+
+        // Load fruit
+<span class="nc" id="L73">        this.fruitImage = this.loadImage(&quot;fruit.png&quot;);</span>
+
+        // Load waka
+<span class="nc" id="L76">        this.faceDownImage = this.loadImage(&quot;playerDown.png&quot;);</span>
+<span class="nc" id="L77">        this.faceUpImage = this.loadImage(&quot;playerUp.png&quot;);</span>
+<span class="nc" id="L78">        this.faceLeftImage = this.loadImage(&quot;playerLeft.png&quot;);</span>
+<span class="nc" id="L79">        this.faceRightImage = this.loadImage(&quot;playerRight.png&quot;);</span>
+<span class="nc" id="L80">        this.closedImage = this.loadImage(&quot;playerClosed.png&quot;);</span>
+
+        // Load ghost
+<span class="nc" id="L83">        this.chaserImage = this.loadImage(&quot;chaser.png&quot;);</span>
+<span class="nc" id="L84">        this.ambusherImage = this.loadImage(&quot;ambusher.png&quot;);</span>
+<span class="nc" id="L85">        this.whimImage = this.loadImage(&quot;whim.png&quot;);</span>
+<span class="nc" id="L86">        this.ignorantImage = this.loadImage(&quot;ignorant.png&quot;);</span>
+<span class="nc" id="L87">        this.frightenedImage = this.loadImage(&quot;frightened.png&quot;);</span>
+
+        // Set up game with game manager
+<span class="nc" id="L90">        gameManager.setUp();</span>
+
+<span class="nc" id="L92">    }</span>
+
+    public void settings() {
+<span class="nc" id="L95">        size(WIDTH, HEIGHT);</span>
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * Called on every frame of the game. Calls the &lt;code&gt;gameManager.tick()&lt;/code&gt;
+     * function which runs all the logic for one frame and draws all the objects in
+     * one frame.
+     */
+    public void draw() {
+<span class="nc" id="L104">        background(0, 0, 0);</span>
+<span class="nc" id="L105">        gameManager.tick();</span>
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * Register key presses by the player and sends it to the
+     * &lt;code&gt;GameManager&lt;/code&gt; object.
+     */
+    public void keyPressed() {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (key == CODED) {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (keyCode == UP) {</span>
+<span class="nc" id="L115">                this.gameManager.nextMove = Direction.Up;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            } else if (keyCode == DOWN) {</span>
+<span class="nc" id="L117">                this.gameManager.nextMove = Direction.Down;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            } else if (keyCode == LEFT) {</span>
+<span class="nc" id="L119">                this.gameManager.nextMove = Direction.Left;</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            } else if (keyCode == RIGHT) {</span>
+<span class="nc" id="L121">                this.gameManager.nextMove = Direction.Right;</span>
+            }
+        } else {
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            if (key == ' ') {</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                gameManager.debug = !gameManager.debug;</span>
+            }
+        }
+<span class="nc" id="L128">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L131">        PApplet.main(&quot;ghost.App&quot;);</span>
+<span class="nc" id="L132">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

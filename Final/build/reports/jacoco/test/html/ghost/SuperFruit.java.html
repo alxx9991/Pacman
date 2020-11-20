@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SuperFruit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">SuperFruit.java</span></div><h1>SuperFruit.java</h1><pre class="source lang-java linenums">package ghost;
+
+import ghost.Ghost.Mode;
+import processing.core.PImage;
+
+/**
+ * A type of fruit that has a special property - when collected by Waka, all
+ * ghosts become frightened for a period of time set by the config file. When
+ * frightened, ghosts move at random at intersections, and are killed if they
+ * collide with Waka. They are twice the size of normal fruit, and also must be
+ * collected to win the game.
+ */
+public class SuperFruit extends Fruit {
+    private boolean activated;
+
+    public SuperFruit(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+<span class="fc" id="L17">        super(x, y, sprite, gm, gridX, gridY);</span>
+<span class="fc" id="L18">        this.activated = false;</span>
+<span class="fc" id="L19">    }</span>
+
+    /**
+     * If alive, draw the fruit. If the super fruit is dead and has not been
+     * activated before, it will set each ghost to frightened mode, and save the
+     * current state of the ghost into its saved mode field. Then it will have been
+     * activated, and cannot be activated again.
+     */
+
+    public void draw() {
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (isAlive()) {</span>
+<span class="nc" id="L30">            getGm().app.image(getSprite(), getX() - 7, getY() - 7, 30, 30);</span>
+        } else {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            if (!this.activated) { // Ensure that the same fruit cannot activate twice</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                for (Ghost ghost : getGm().ghosts) {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                    if (ghost.getMode().equals(Mode.Frightened)) {</span>
+<span class="fc" id="L35">                        ghost.setFrightenedCount(0);</span>
+                    } else {
+<span class="fc" id="L37">                        ghost.setSavedMode(ghost.getMode());</span>
+<span class="fc" id="L38">                        ghost.setMode(Mode.Frightened);</span>
+                    }
+<span class="fc" id="L40">                }</span>
+<span class="fc" id="L41">                this.activated = true;</span>
+            }
+        }
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * Sets the alive status of the fruit back to true, and sets its activated state
+     * back to false.
+     */
+    public void restartFruit() { // Restart fruit when game restarts
+<span class="fc" id="L51">        setAlive(true);</span>
+<span class="fc" id="L52">        this.activated = false;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Returns if the super fruit has been previously activated or not
+     * 
+     * @return True if the super fruit has been activated before, false if not.
+     */
+    public boolean isActivated() {
+<span class="fc" id="L61">        return this.activated;</span>
+    }
+
+    /**
+     * Sets if the super fruit has been previously activated or not
+     * 
+     * @param b True if the super fruit has been activated before, false if not.
+     */
+    public void setActivated(boolean b) {
+<span class="fc" id="L70">        this.activated = b;</span>
+<span class="fc" id="L71">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,22 @@
+ghost/AmbusherTest.java
+ ghost.AmbusherTest
+ghost/MapTest.java
+ ghost.MapTest
+ghost/GameManagerTest.java
+ ghost.GameManagerTest
+ghost/WhimTest.java
+ ghost.WhimTest
+ghost/SuperFruitTest.java
+ ghost.SuperFruitTest
+ghost/IgnorantTest.java
+ ghost.IgnorantTest
+ghost/AppTest.java
+ ghost.AppTest
+ghost/GhostTest.java
+ ghost.GhostTest
+ghost/MovableTest.java
+ ghost.MovableTest
+ghost/GameObjectTest.java
+ ghost.GameObjectTest
+ghost/WakaTest.java
+ ghost.WakaTest

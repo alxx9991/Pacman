@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Fruit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Fruit.java</span></div><h1>Fruit.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+
+/**
+ * A fruit is an object which must be collected by Waka. When all the fruit on
+ * the map is collected, the player wins the game.
+ */
+public class Fruit extends GameObject {
+    private boolean alive;
+
+    public Fruit(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+<span class="fc" id="L13">        super(x, y, sprite, gm, gridX, gridY);</span>
+<span class="fc" id="L14">        this.alive = true;</span>
+<span class="fc" id="L15">    }</span>
+
+    /**
+     * Check if a player is in the same grid as a fruit. If so, set the alive status
+     * to false.
+     */
+    public void tick() {
+<span class="fc bfc" id="L22" title="All 4 branches covered.">        if (getGm().player.getGridX() == getGridX() &amp;&amp; getGm().player.getGridY() == getGridY()) {</span>
+<span class="fc" id="L23">            this.alive = false;</span>
+        }
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * If the fruit is alive, draw it onto the screen.
+     */
+    public void draw() {
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (this.alive) {</span>
+<span class="nc" id="L32">            getGm().app.image(getSprite(), getX(), getY());</span>
+        }
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * Count fruit left on the map. If there is one or more left, return true, else
+     * return false.
+     * 
+     * @param gm The game manager where the fruit objects are stored.
+     * @return True if there are no fruit left, false if otherwise.
+     */
+    public static boolean fruitLeft(GameManager gm) {
+<span class="fc" id="L44">        int count = 0;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (Fruit fruit : gm.fruits) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            if (fruit.alive == true) {</span>
+<span class="fc" id="L47">                count += 1;</span>
+            }
+<span class="fc" id="L49">        }</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (count == 0) {</span>
+<span class="nc" id="L51">            return false;</span>
+        } else {
+<span class="fc" id="L53">            return true;</span>
+        }
+    }
+    
+    /**
+     * Restarts the fruit at the end of a game. Sets its alive status to true.
+     */
+    public void restartFruit() {
+<span class="fc" id="L61">        this.alive = true;</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Returns if the fruit is alive or not
+     * 
+     * @return True if the fruit is alive, false if not.
+     */
+    public boolean isAlive() {
+<span class="fc" id="L70">        return this.alive;</span>
+    }
+
+    /**
+     * Sets the fruit alive or dead status
+     * 
+     * @param b If b is true then the fruit is alive, if b is false the fruit is
+     *          dead.
+     */
+    public void setAlive(boolean b) {
+<span class="fc" id="L80">        this.alive = b;</span>
+<span class="fc" id="L81">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

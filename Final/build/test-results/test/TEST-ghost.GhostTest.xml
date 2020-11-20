@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ghost.GhostTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2020-11-20T01:44:39" hostname="vlan-2644-10-16-180-245.student.wireless.sydney.edu.au" time="0.049">
+  <properties/>
+  <testcase name="canChangeDirectionTest()" classname="ghost.GhostTest" time="0.028"/>
+  <testcase name="checkIfFrightenedTest()" classname="ghost.GhostTest" time="0.003"/>
+  <testcase name="generatePreferencesTest()" classname="ghost.GhostTest" time="0.002"/>
+  <testcase name="deadDrawTest()" classname="ghost.GhostTest" time="0.002"/>
+  <testcase name="selectModeTest()" classname="ghost.GhostTest" time="0.002"/>
+  <testcase name="drawLineTest()" classname="ghost.GhostTest" time="0.003"/>
+  <testcase name="selectDirectionTest()" classname="ghost.GhostTest" time="0.002"/>
+  <testcase name="canGoDirectionTest()" classname="ghost.GhostTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ghost.WakaTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2020-11-20T01:44:39" hostname="vlan-2644-10-16-180-245.student.wireless.sydney.edu.au" time="0.03">
+  <properties/>
+  <testcase name="testResetIfDead()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="wakaIntersectionMoveTestStandstill()" classname="ghost.WakaTest" time="0.008"/>
+  <testcase name="drawTest()" classname="ghost.WakaTest" time="0.001"/>
+  <testcase name="testSetSpriteOpen()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="testDetermineSpriteOpen()" classname="ghost.WakaTest" time="0.001"/>
+  <testcase name="bottomRightCornerCollisionTest()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="bottomLeftCornerCollisionTest()" classname="ghost.WakaTest" time="0.002"/>
+  <testcase name="nonIntersectionMoveTest()" classname="ghost.WakaTest" time="0.003"/>
+  <testcase name="topRightCorner()" classname="ghost.WakaTest" time="0.001"/>
+  <testcase name="topLeftCorner()" classname="ghost.WakaTest" time="0.001"/>
+  <testcase name="testCollisions()" classname="ghost.WakaTest" time="0.002"/>
+  <system-out><![CDATA[208
+207
+208
+208
+208
+16
+16
+16
+16
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

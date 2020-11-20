@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Whim.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Milestone</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Whim.java</span></div><h1>Whim.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+
+/**
+ * A type of ghost which pairs itself with a chaser. Once paired with a Chaser,
+ * the attack target of Whim in chase mode is determined by the chase vector of
+ * Chaser, shifted by 2 units in the direction of Waka's travel, and then
+ * extended by twice the length. Its home corner is the bottom right corner. If
+ * it does not have a Chaser to pair with, it will directly chase Waka.
+ */
+public class Whim extends Ghost {
+    private Chaser chaser;
+
+    public Whim(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+<span class="fc" id="L16">        super(x, y, sprite, gm, gridX, gridY, 448, 576);</span>
+<span class="fc" id="L17">    }</span>
+
+    /**
+     * Iterate through the chasers present in the game. If a chaser which has no
+     * paired whim is found, the whim pairs itself with a chaser. It then uses the
+     * Chaser's attack vector to generate its own.
+     */
+    public void setChaser() {
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        for (Ghost ghost : getGm().ghosts) {</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">            if (ghost instanceof Chaser) {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">                if (((Chaser) ghost).hasWhim() == false) {</span>
+<span class="fc" id="L28">                    this.chaser = (Chaser) ghost;</span>
+<span class="fc" id="L29">                    this.chaser.setHasWhim(true);</span>
+<span class="fc" id="L30">                    return;</span>
+                }
+            }
+<span class="fc" id="L33">        }</span>
+<span class="fc" id="L34">    }</span>
+
+    /**
+     * Generates the vector for which the whim attacks. Its attack vector in chase
+     * mode is given by shifting the Chaser's vector by 2 grid spaces in the
+     * direction of Waka's travel, and then doubling it.
+     * 
+     * @param targetx The x coordinate of the target location
+     * @param targety The y coordinagte of the target location
+     * @return An array of two integers which is the intended direction of travel
+     *         for this ghost type.
+     */
+    public int[] generateVectors(int targetx, int targety) {
+        // target will be where the vector of the chaser + location of target
+        // set new vector
+<span class="fc" id="L49">        int[] vector = new int[2];</span>
+<span class="fc" id="L50">        int[] chaserVector = new int[2];</span>
+
+<span class="fc" id="L52">        vector[0] = targetx - this.getX();</span>
+<span class="fc" id="L53">        vector[1] = targety - this.getY();</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (getMode().equals(Mode.Chase)) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (this.chaser == null) {</span>
+
+<span class="fc" id="L58">                vector[0] = targetx - this.getX();</span>
+<span class="fc" id="L59">                vector[1] = targety - this.getY();</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            } else if (this.chaser.isAlive() == true) {</span>
+
+<span class="fc" id="L63">                chaserVector[0] = 2 * (targetx - chaser.getX());</span>
+<span class="fc" id="L64">                chaserVector[1] = 2 * (targety - chaser.getY());</span>
+
+<span class="fc" id="L66">                targetx = chaserVector[0] + chaser.getX();</span>
+<span class="fc" id="L67">                targety = chaserVector[1] + chaser.getY();</span>
+
+<span class="fc" id="L69">                vector[0] = targetx - this.getX();</span>
+<span class="fc" id="L70">                vector[1] = targety - this.getY();</span>
+
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                if (getGm().player.getDirection().equals(Direction.Right)) {</span>
+<span class="fc" id="L73">                    vector[0] += 32;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                    if (getX() + vector[0] &gt; 448) {</span>
+<span class="fc" id="L75">                        vector[0] = 448 - getX();</span>
+                    }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                } else if (getGm().player.getDirection().equals(Direction.Left)) {</span>
+<span class="fc" id="L78">                    vector[0] -= 64;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                    if (getX() + vector[0] &lt; 0) {</span>
+<span class="fc" id="L80">                        vector[0] = -getX();</span>
+                    }
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                } else if (getGm().player.getDirection().equals(Direction.Up)) {</span>
+<span class="fc" id="L83">                    vector[1] -= 64;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                    if (getY() + vector[1] &lt; 0) {</span>
+<span class="fc" id="L85">                        vector[1] = -getY();</span>
+                    }
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                } else if (getGm().player.getDirection().equals(Direction.Down)) {</span>
+<span class="fc" id="L88">                    vector[1] += 64;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                    if (getY() + vector[1] &gt; 576) {</span>
+<span class="fc" id="L90">                        vector[1] = 576 - getY();</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L95">        return vector;</span>
+    }
+
+    public boolean hasChaser() {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (this.chaser != null) {</span>
+<span class="fc" id="L100">            return true;</span>
+        } else {
+<span class="fc" id="L102">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
