@@ -6,8 +6,8 @@ import processing.core.PImage;
  * A type of ghost which targets the grid space 4 units ahead of the direction
  * Waka is travelling in. Its corner is the top right corner.
  */
-public class Ambusher extends Ghost {
-    public Ambusher(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+public class Pinky extends Ghost {
+    public Pinky(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         super(x, y, sprite, gm, gridX, gridY, 448, 0);
     }
 

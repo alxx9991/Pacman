@@ -22,7 +22,7 @@ public class AmbusherTest {
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
             ghost.setMode(Mode.Chase);
-            if (ghost instanceof Ambusher) {
+            if (ghost instanceof Pinky) {
                 ambusher = ghost;
             }
         }

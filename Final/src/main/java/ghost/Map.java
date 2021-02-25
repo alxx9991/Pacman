@@ -71,7 +71,7 @@ public class Map {
                     gm.objects.add(player);
                     gm.player = player;
                 } else if (gm.grid.get(gridX)[gridY] == 'a') {
-                    Ghost ghost = new Ambusher(x, y, gm.app.ambusherImage, this.gm, gridY, gridX);
+                    Ghost ghost = new Pinky(x, y, gm.app.ambusherImage, this.gm, gridY, gridX);
                     gm.objects.add(ghost);
                     gm.ghosts.add(ghost);
                     ;
