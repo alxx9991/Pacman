@@ -76,7 +76,7 @@ public class GameManager {
     /**
      * The player object of the game
      */
-    protected Waka player;
+    protected Pacman player;
     /**
      * A grid of characters that represent the map/
      */
@@ -102,8 +102,8 @@ public class GameManager {
         Map map = new Map(file, this);
         map.generateObjects();
         for (Ghost ghost : ghosts) {
-            if (ghost instanceof Whim) {
-                ((Whim) ghost).setChaser();
+            if (ghost instanceof Inky) {
+                ((Inky) ghost).setChaser();
             }
         }
     }

@@ -20,7 +20,7 @@ public class IgnorantTest {
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
             ghost.setMode(Mode.Chase);
-            if (ghost instanceof Ignorant) {
+            if (ghost instanceof Clyde) {
                 ignorant = ghost;
             }
         }

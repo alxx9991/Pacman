@@ -8,13 +8,13 @@ import processing.core.PImage;
  * with ghosts. Moves at the same speed as ghosts. Has a number of lives set by
  * the config file. If all the lives are lost, the game is over.
  */
-public class Waka extends Movable {
+public class Pacman extends Movable {
     private int frameCycle;
     private final PImage closedSprite;
     boolean alive;
     private long lives;
 
-    public Waka(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+    public Pacman(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         super(x, y, sprite, gm, gridX, gridY);
         this.frameCycle = 0;
         this.closedSprite = getGm().app.closedImage;

@@ -6,6 +6,12 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - HolidayGenerator",
+            "request": "launch",
+            "mainClass": "HolidayGenerator"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - GameManagerTest",
             "request": "launch",
             "mainClass": "ghost.GameManagerTest",

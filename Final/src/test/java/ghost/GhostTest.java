@@ -25,7 +25,7 @@ public class GhostTest {
             ghost.selectDirection();
             assert (ghost.getMode() == Mode.Frightened);
             assert (ghost.getDirection() != Direction.Still);
-            if (ghost instanceof Chaser) {
+            if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }
@@ -51,7 +51,7 @@ public class GhostTest {
         Ghost chaser = null;
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
-            if (ghost instanceof Chaser) {
+            if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }
@@ -92,7 +92,7 @@ public class GhostTest {
         Ghost chaser = null;
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
-            if (ghost instanceof Chaser) {
+            if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }
@@ -162,7 +162,7 @@ public class GhostTest {
         Ghost chaser = null;
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
-            if (ghost instanceof Chaser) {
+            if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }
@@ -183,7 +183,7 @@ public class GhostTest {
         Ghost chaser = null;
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
-            if (ghost instanceof Chaser) {
+            if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }
@@ -205,7 +205,7 @@ public class GhostTest {
         Ghost chaser = null;
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
-            if (ghost instanceof Chaser) {
+            if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }

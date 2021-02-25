@@ -9,10 +9,10 @@ import processing.core.PImage;
  * extended by twice the length. Its home corner is the bottom right corner. If
  * it does not have a Chaser to pair with, it will directly chase Waka.
  */
-public class Whim extends Ghost {
-    private Chaser chaser;
+public class Inky extends Ghost {
+    private Blinky chaser;
 
-    public Whim(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+    public Inky(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         super(x, y, sprite, gm, gridX, gridY, 448, 576);
     }
 
@@ -23,9 +23,9 @@ public class Whim extends Ghost {
      */
     public void setChaser() {
         for (Ghost ghost : getGm().ghosts) {
-            if (ghost instanceof Chaser) {
-                if (((Chaser) ghost).hasWhim() == false) {
-                    this.chaser = (Chaser) ghost;
+            if (ghost instanceof Blinky) {
+                if (((Blinky) ghost).hasWhim() == false) {
+                    this.chaser = (Blinky) ghost;
                     this.chaser.setHasWhim(true);
                     return;
                 }

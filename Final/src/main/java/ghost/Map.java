@@ -67,7 +67,7 @@ public class Map {
                     gm.objects.add(fruit);
                     gm.fruits.add(fruit);
                 } else if (gm.grid.get(gridX)[gridY] == 'p') {
-                    Waka player = new Waka(x, y, gm.app.faceRightImage, this.gm, gridY, gridX);
+                    Pacman player = new Pacman(x, y, gm.app.faceRightImage, this.gm, gridY, gridX);
                     gm.objects.add(player);
                     gm.player = player;
                 } else if (gm.grid.get(gridX)[gridY] == 'a') {
@@ -76,17 +76,17 @@ public class Map {
                     gm.ghosts.add(ghost);
                     ;
                 } else if (gm.grid.get(gridX)[gridY] == 'c') {
-                    Ghost ghost = new Chaser(x, y, gm.app.chaserImage, this.gm, gridY, gridX);
+                    Ghost ghost = new Blinky(x, y, gm.app.chaserImage, this.gm, gridY, gridX);
                     gm.objects.add(ghost);
                     gm.ghosts.add(ghost);
                     ;
                 } else if (gm.grid.get(gridX)[gridY] == 'i') {
-                    Ghost ghost = new Ignorant(x, y, gm.app.ignorantImage, this.gm, gridY, gridX);
+                    Ghost ghost = new Clyde(x, y, gm.app.ignorantImage, this.gm, gridY, gridX);
                     gm.objects.add(ghost);
                     gm.ghosts.add(ghost);
                     ;
                 } else if (gm.grid.get(gridX)[gridY] == 'w') {
-                    Ghost ghost = new Whim(x, y, gm.app.whimImage, this.gm, gridY, gridX);
+                    Ghost ghost = new Inky(x, y, gm.app.whimImage, this.gm, gridY, gridX);
                     gm.objects.add(ghost);
                     gm.ghosts.add(ghost);
                     ;

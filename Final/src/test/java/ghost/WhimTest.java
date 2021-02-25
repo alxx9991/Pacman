@@ -22,14 +22,14 @@ public class WhimTest {
         map.generateObjects();
         for (Ghost ghost : gameManager.ghosts) {
             ghost.setMode(Mode.Chase);
-            if (ghost instanceof Whim) {
-                ((Whim)ghost).setChaser();
-                if (((Whim)ghost).hasChaser()) {
+            if (ghost instanceof Inky) {
+                ((Inky)ghost).setChaser();
+                if (((Inky)ghost).hasChaser()) {
                     whim = ghost;
                 } else {
                     whim2 = ghost;
                 }
-            } else if (ghost instanceof Chaser) {
+            } else if (ghost instanceof Blinky) {
                 chaser = ghost;
             }
         }

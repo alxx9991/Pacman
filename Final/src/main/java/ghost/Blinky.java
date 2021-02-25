@@ -6,10 +6,10 @@ import processing.core.PImage;
  * A type of ghost which directly targets and chases Waka. Its corner is the top
  * left corner.
  */
-public class Chaser extends Ghost {
+public class Blinky extends Ghost {
     private boolean hasWhim;
 
-    public Chaser(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+    public Blinky(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         super(x, y, sprite, gm, gridX, gridY, 0, 0);
         this.hasWhim = false;
     }

@@ -7,8 +7,8 @@ import processing.core.PImage;
  * units away (straight line distance). Otherwise, he will target his home
  * corner, the bottom left corner.
  */
-public class Ignorant extends Ghost {
-    public Ignorant(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
+public class Clyde extends Ghost {
+    public Clyde(int x, int y, PImage sprite, GameManager gm, int gridX, int gridY) {
         super(x, y, sprite, gm, gridX, gridY, 0, 576);
     }
 
