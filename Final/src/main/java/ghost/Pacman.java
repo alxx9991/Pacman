@@ -40,7 +40,6 @@ public class Pacman extends Movable {
         setCollisionBorders();
         checkGhostCollision();
         resetIfDead();
-        System.out.println(this.getX());
     }
 
     /**
