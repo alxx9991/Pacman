@@ -3,6 +3,7 @@ This is a recreation of the pacman game. This project is purely built as a codin
 
 ## How to run
 In the directory called "Final", type the command: gradle run
+You must have JRE and Gradle installed to run.
 
 ### How to play
 Use the arrow keys to move around. Eat all the fruit on the map to win, while avoiding the ghosts. The number of lives is displayed in the bottom. Press the spacebar to activate debug mode, which shows the direction of ghost movement.
