@@ -2,7 +2,7 @@
 This is a recreation of the pacman game. This project is purely built as a coding exercise/for fun, and is not intended to be used for commerical purposes. I have no affiliation with the original creators.
 
 ## How to run
-In the directory called "Final", type the command: gradle run
+In the directory called "Final", type the command: `gradle run`
 You must have JRE and Gradle installed to run.
 
 ### How to play
